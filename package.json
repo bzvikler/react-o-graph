@@ -1,0 +1,26 @@
+{
+  "name": "react-o-graph",
+  "version": "1.0.0",
+  "description": "Metrics for your react app displayed in a fun graph visualization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bzvikler/react-o-graph.git"
+  },
+  "keywords": [
+    "react",
+    "analysis",
+    "graph",
+    "fun",
+    "visualization"
+  ],
+  "author": "The Four Tens 💅",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bzvikler/react-o-graph/issues"
+  },
+  "homepage": "https://github.com/bzvikler/react-o-graph#readme"
+}

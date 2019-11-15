@@ -1,0 +1,59 @@
+Parts:
+    
+    - client app directory stuff
+        - tree builder (lexical analysis)
+            - looks through client component directory
+            - builds tree structure of components based on usage of components within .jsx files
+            - calls to analysis API for initial rendering of tree
+                - create a JSON tree and send
+        - file watcher (dynamic analysis -- instrumenting code -- a re-writer)
+            - watch directory of components in app
+            - create copy of file with componentDidUpdate (and other lifecylce methods) inserted into it 
+                - componentDidMount
+                - componentDidUpdate
+                - componentWillUnmount
+                - render
+            - insert into each lifecycle method a call to our analysis API
+    - analysis react app
+        - analysis API
+            - listens for intialization of tree
+                - parses JSON and sends tree to d3
+            - listens for changes from file watcher
+            - calculates analysis
+            - re-renders tree react app
+        - visualization UI
+            - handles styling of tree
+            - displays metrics
+            - on click of node
+                - display details page
+                - have some fun charts (doughnut?!)
+                - *fun mode*, removes edges and turns tree into "collison detection"
+
+Analysis ideas:
+
+        - global metrics
+            - tree structure of nodes
+                - a tree
+            - RAM usage
+            - CPU usage
+        - per node metrics
+            - amount of renders of each node
+                - a number
+            - percentage of renders of node compared to rest of app
+                - a doughnut
+            - number of children for each node
+                - a number
+            - props of a node
+                - a list
+            - values of props through time (history)
+                - a list
+                - sliders will show value through time 
+            - percentage of re-renders by prop
+                - doughnut
+            - state of node
+                - a list of values
+            - values of state through time (history)
+                - a list
+                - sliders will show value through time 
+            - percentage of re-renders by state property
+                - doughnut
