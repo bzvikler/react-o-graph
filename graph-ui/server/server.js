@@ -5,7 +5,7 @@ const app = express();
 var nodes = [];
 var edges = [];
 var id = 1;
-var pendingUpdates = false;
+var pendingUpdates = 0;
 
 // This endpoint is used by the client as an EventSource
 // Client retrieves tree structure through this endpoint
@@ -16,14 +16,14 @@ app.get('/graph', (req, res) => {
           'Cache-Control': 'no-cache',
           'Access-Control-Allow-Origin': '*'});
 
-  if (pendingUpdates) {
+  if (pendingUpdates >= 1) {
     var graph = {
       "nodes": nodes,
       "links": edges
     }
     var data = JSON.stringify(graph);
     const msg = 'id: 1\nevent: onUpdate\ndata: ' + data + '\n\n';
-    pendingUpdates = false;
+    pendingUpdates--;
     res.send(msg);
   }
   else {
@@ -37,6 +37,7 @@ app.get('/graph', (req, res) => {
 // this endpoint is for UI testing purposes only!!
 // it's bad and hacky so dont ask me about it - susan
 app.get('/addRandomNode', (req, res) => {
+  res.set({'Access-Control-Allow-Origin': '*'});
   // add node
   var node = { 
     "id": id.toString(),
@@ -56,7 +57,7 @@ app.get('/addRandomNode', (req, res) => {
 
   nodes.push(node);
   id++;
-  pendingUpdates = true;
+  pendingUpdates++;
   res.send(nodes.length.toString());
 })
 // ========================================================

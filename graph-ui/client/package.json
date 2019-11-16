@@ -2,7 +2,9 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
+    "d3-force": "^2.0.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.2",
     "react-force-graph": "^1.27.2",

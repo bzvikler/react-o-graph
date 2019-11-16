@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
 import './App.css';
-import Tree from './Tree';
+import Graph from './Graph';
+import { sampleGraph } from './sampleGraph';
+
+const emptyGraph = {
+  "nodes": [ 
+  ],
+  "links": [
+  ]
+};
+
+// change this if running with server
+const SERVER_ON = false;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {
-        "nodes": [ 
-        ],
-        "links": [
-        ]
-      }
+      data: (SERVER_ON ? emptyGraph : sampleGraph)
     };
 
-    this.eventSource = new EventSource('http://localhost:5000/graph');
+    if (SERVER_ON) {
+      this.eventSource = new EventSource('http://localhost:5000/graph');
+    }
   }
 
   componentDidMount() {
-    this.eventSource.addEventListener(
-      'onUpdate', (e) => this.updateGraph(JSON.parse(e.data)));
+    if (SERVER_ON) {
+      this.eventSource.addEventListener(
+        'onUpdate', (e) => this.updateGraph(JSON.parse(e.data)));
+    }
   }
 
   updateGraph(data) {
@@ -32,7 +42,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-       <Tree data={this.state.data}/>
+       <Graph data={this.state.data}/>
       </div>
     );
   }
