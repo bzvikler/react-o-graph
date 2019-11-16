@@ -3,6 +3,7 @@ const app = express();
 
 // Graph structure stored in server
 var nodesToAdd = [];
+var nodesToUpdate = [];
 var id = 1;
 
 // This endpoint is used by the client as an EventSource
@@ -20,7 +21,16 @@ app.get('/graph', (req, res) => {
     const msg = 'id: 1\nevent: onAdd\ndata: ' + data + '\n\n';
     res.send(msg);
   }
-  // todo: handle update and delete as well
+
+  if (nodesToUpdate.length > 0) {
+    var data = JSON.stringify(nodesToUpdate);
+    nodesToUpdate = [];
+    const msg = 'id: 2\nevent: onUpdate\ndata: ' + data + '\n\n';
+    res.send(msg);
+  }
+  
+  // todo: handle remove
+
   else {
     res.send('no updates');
   }
@@ -47,6 +57,12 @@ app.get('/addRandomNode', (req, res) => {
   nodesToAdd.push(node);
   id++;
   res.send("created node with id " + node.id);
+
+  // fake update
+  setTimeout(() => {
+    nodesToUpdate.push(node);
+  }, 4000);
+  
 })
 // ========================================================
 

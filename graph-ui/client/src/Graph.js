@@ -46,15 +46,17 @@ export default class Graph extends React.Component {
         this.toggleMotion = this.toggleMotion.bind(this);
 
         // testing functions
-        this.updateNode = this.updateNode.bind(this);
-        this.updateRandNode = this.updateRandNode.bind(this);
+        this.updateNodes = this.updateNodes.bind(this);
+        this.mockUpdate = this.mockUpdate.bind(this);
         this.mockAdd = this.mockAdd.bind(this);
     }
 
     componentDidMount() {
         if (SERVER_ON) {
             this.eventSource.addEventListener(
-              'onAdd', (e) => this.addNodes(JSON.parse(e.data)));
+                'onAdd', (e) => this.addNodes(JSON.parse(e.data)));
+            this.eventSource.addEventListener(
+                'onUpdate', (e) => this.updateNodes(JSON.parse(e.data)));
         }
         this.addAnimation();
     }
@@ -79,6 +81,27 @@ export default class Graph extends React.Component {
               this.addAnimation();
           });
         }
+    }
+
+    // replaces nodes with updated node
+    updateNodes(updated) {
+        let nodes = this.state.data.nodes;
+        let newTime = this.state.currentTime + 1;
+
+        for (let u of updated) {
+            let idx = nodes.findIndex(n => n.id == u.id);
+            if (idx < 0) return;
+            let node = nodes[idx];
+            // TODO: change other data based on updated node
+            node.lastUpdated = newTime;
+        }
+
+        let data = this.state.data;
+        data.nodes = nodes;
+        this.setState({
+            data: data,
+            currentTime: newTime
+        })
     }
 
     paintRing(node, ctx) {
@@ -204,29 +227,13 @@ export default class Graph extends React.Component {
     }
 
     // ========== TESTING FUNCTIONS ============
-    // updates node with id, updating record by increasing time count
-    // if node not found, nothing happens
-    updateNode(id) {
-        let nodes = this.state.data.nodes;
-        let newTime = this.state.currentTime + 1;
-        for (let node of nodes) {
-            if (node.id === id) {
-                node.lastUpdated = newTime;
-            }
-        }
-        let data = this.state.data;
-        data.nodes = nodes;
-        this.setState({
-            data: data,
-            currentTime: newTime
-        })
-    }
 
-    updateRandNode() {
+    // updates a random node
+    mockUpdate() {
         let nodes = this.state.data.nodes;
         let idx = Math.floor(Math.random() * nodes.length);
-        let id = this.state.data.nodes[idx].id;
-        this.updateNode(id);
+        let node = this.state.data.nodes[idx];
+        this.updateNodes([node]);
     }
 
     mockAdd() {
@@ -269,7 +276,7 @@ export default class Graph extends React.Component {
             <span
             className="button" onClick={this.mockAdd}>mock add</span>
             <span hidden={this.state.data.nodes.length == 0} 
-            className="button" onClick={this.updateRandNode}>mock update</span>
+            className="button" onClick={this.mockUpdate}>mock update</span>
             <span hidden={this.state.data.nodes.length == 0} 
             className="button" onClick={this.toggleMotion}>motion: {this.state.motionOn? "on" : "off"}</span>
             </div>
