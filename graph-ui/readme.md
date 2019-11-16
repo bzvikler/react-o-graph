@@ -84,4 +84,5 @@ const myData = {
   ]
 }
 ```
+- note: our graph will have an empty `links` array, since there will be no edges
 

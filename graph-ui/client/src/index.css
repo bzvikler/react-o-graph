@@ -4,3 +4,10 @@ body {
   font-family: sans-serif;
   text-align: center;
 }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #344152;
+}
