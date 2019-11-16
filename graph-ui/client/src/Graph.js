@@ -1,4 +1,4 @@
-import React, { createRef, useCallback } from 'react';
+import React, { createRef } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
 import NodeDetails from './NodeDetails';
 import { sampleGraph, emptyGraph } from './sampleGraph';
@@ -12,8 +12,6 @@ import { forceCollide } from 'd3-force';
 
 // change this if running with server
 const SERVER_ON = true;
-
-const background = "#344152";
 
 export default class Graph extends React.Component {
     constructor(props) {
@@ -89,7 +87,7 @@ export default class Graph extends React.Component {
         let newTime = this.state.currentTime + 1;
 
         for (let u of updated) {
-            let idx = nodes.findIndex(n => n.id == u.id);
+            let idx = nodes.findIndex(n => n.id === u.id);
             if (idx < 0) return;
             let node = nodes[idx];
             // TODO: change other data based on updated node
@@ -105,14 +103,14 @@ export default class Graph extends React.Component {
     }
 
     paintRing(node, ctx) {
-        if (node.creationTime == this.state.currentTime) {
+        if (node.creationTime === this.state.currentTime) {
             this.paintAdd(node, ctx);
         }
-        else if (node.lastUpdated == this.state.currentTime) {
+        else if (node.lastUpdated === this.state.currentTime) {
             this.paintUpdate(node, ctx);
         }
 
-        if (node.id == this.state.id) {
+        if (node.id === this.state.id) {
             this.paintSelect(node, ctx);
         }
     }
@@ -152,7 +150,7 @@ export default class Graph extends React.Component {
 
     addAnimation() {
         let data = this.state.data;
-        if (data.nodes.length == 0) return;
+        if (data.nodes.length === 0) return;
         const fg = this.fgRef.current;
         // Deactivate existing forces
         fg.d3Force('center', null);
@@ -199,9 +197,9 @@ export default class Graph extends React.Component {
 
     getHighlightedNodes() {
         return this.state.data.nodes.filter(n => 
-            n.creationTime == this.state.currentTime ||
-            n.lastUpdated == this.state.currentTime ||
-            n.id == this.state.id)
+            n.creationTime === this.state.currentTime ||
+            n.lastUpdated === this.state.currentTime ||
+            n.id === this.state.id)
     }
 
     toggleMotion() {
@@ -275,9 +273,9 @@ export default class Graph extends React.Component {
             <div className="updateButton">
             <span
             className="button" onClick={this.mockAdd}>mock add</span>
-            <span hidden={this.state.data.nodes.length == 0} 
+            <span hidden={this.state.data.nodes.length === 0} 
             className="button" onClick={this.mockUpdate}>mock update</span>
-            <span hidden={this.state.data.nodes.length == 0} 
+            <span hidden={this.state.data.nodes.length === 0} 
             className="button" onClick={this.toggleMotion}>motion: {this.state.motionOn? "on" : "off"}</span>
             </div>
 
