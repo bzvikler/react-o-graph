@@ -11,7 +11,7 @@ const emptyGraph = {
 };
 
 // change this if running with server
-const SERVER_ON = false;
+const SERVER_ON = true;
 
 class App extends Component {
   constructor(props) {
@@ -33,8 +33,7 @@ class App extends Component {
   }
 
   updateGraph(data) {
-    console.log(data);
-    if (data != '') {
+    if (data != 'no updates') { // this is bad, change to constant later
       this.setState({data: data});
     }
   }
@@ -42,7 +41,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-       <Graph data={this.state.data}/>
+        {this.state.data.nodes.length >= 1 &&
+       <Graph data={this.state.data}/>}
       </div>
     );
   }

@@ -3,9 +3,8 @@ const app = express();
 
 // Graph structure stored in server
 var nodes = [];
-var edges = [];
 var id = 1;
-var pendingUpdates = 0;
+var pendingUpdates = 1;
 
 // This endpoint is used by the client as an EventSource
 // Client retrieves tree structure through this endpoint
@@ -19,7 +18,7 @@ app.get('/graph', (req, res) => {
   if (pendingUpdates >= 1) {
     var graph = {
       "nodes": nodes,
-      "links": edges
+      "links": []
     }
     var data = JSON.stringify(graph);
     const msg = 'id: 1\nevent: onUpdate\ndata: ' + data + '\n\n';
@@ -27,7 +26,7 @@ app.get('/graph', (req, res) => {
     res.send(msg);
   }
   else {
-    res.send('');
+    res.send('no updates');
   }
 });
 
@@ -39,20 +38,15 @@ app.get('/graph', (req, res) => {
 app.get('/addRandomNode', (req, res) => {
   res.set({'Access-Control-Allow-Origin': '*'});
   // add node
+  var nodeTypes = ["a", "b", "c", "d"];
+  var vals = [1, 4, 2, 6];
+  var idx = Math.floor(Math.random() * 4)
+
   var node = { 
     "id": id.toString(),
-    "name": "node",
-    "val": 1
-  }
-  // add edge
-  var edge = null;
-  if (nodes.length > 0) {
-    var node2 = nodes[Math.floor(Math.random()*nodes.length)];
-    edge = {
-      "source": node2.id,
-      "target": id.toString(),
-    }
-    edges.push(edge);
+    "name": nodeTypes[idx],
+    "val": vals[idx],
+    "cycle": 0,
   }
 
   nodes.push(node);

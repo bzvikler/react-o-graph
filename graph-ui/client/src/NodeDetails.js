@@ -14,9 +14,10 @@ export default class NodeDetails extends React.Component {
         return (
             <div className="info">
                 <b>Information</b><br/>
-                Component: {this.props.name} <br/>
-                Id: {this.props.id} <br />
-                Value: {this.props.val}
+                Component: {this.props.node.name} <br/>
+                Id: {this.props.node.id} <br />
+                Value: {this.props.node.val} <br />
+                Last Updated: {this.props.node.cycle}
             </div>
         );
     }
