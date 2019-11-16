@@ -7,7 +7,7 @@ import { forceCollide } from 'd3-force';
 // Graph of nodes, each representing a component
 // nodes are coloured based on component type
 // nodes are sized based on number of prop types for component
-// halo around node if updated in last cycle
+// halo around node if updated/added last
 // clicking on node will open expanded view for specific component
 
 // change this if running with server
@@ -25,7 +25,7 @@ export default class Graph extends React.Component {
             name: "",
             id: "",
             val: "",
-            currentCycle: 0, // represents # updates received
+            currentTime: 0, // represents # graph updates received
         }
 
         if (SERVER_ON) {
@@ -36,25 +36,36 @@ export default class Graph extends React.Component {
         this.addAnimation = this.addAnimation.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleClickaway = this.handleClickaway.bind(this);
-        this.updateGraph = this.updateGraph.bind(this);
+        this.addNodes = this.addNodes.bind(this);
         this.paintRing = this.paintRing.bind(this);
 
         // testing functions
         this.updateNode = this.updateNode.bind(this);
         this.updateRandNode = this.updateRandNode.bind(this);
+        this.mockAdd = this.mockAdd.bind(this);
     }
 
     componentDidMount() {
         if (SERVER_ON) {
             this.eventSource.addEventListener(
-              'onUpdate', (e) => this.updateGraph(JSON.parse(e.data)));
+              'onAdd', (e) => this.addNodes(JSON.parse(e.data)));
         }
         this.addAnimation();
     }
 
-    updateGraph(data) {
-        if (data != 'no updates') { // this is bad, change to constant later
-          this.setState({data: data}, () => {
+    addNodes(nodes) {
+        if (nodes.length > 0) {
+            let newTime = this.state.currentTime + 1;
+            for (let n of nodes) {
+                n.creationTime = newTime;
+                n.lastUpdated = newTime;
+            }
+            let data = this.state.data;
+            data.nodes = data.nodes.concat(nodes);
+            this.setState({
+                data: data,
+                currentTime: newTime
+            }, () => {
               this.addAnimation();
           });
         }
@@ -66,9 +77,18 @@ export default class Graph extends React.Component {
 
         ctx.beginPath();
         ctx.arc(node.x, node.y, NODE_R + 3, 0, 2 * Math.PI, false);
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = 'white'
         ctx.lineWidth = 0.6
         ctx.stroke();
+
+        // if newly added, draw double line
+        if (node.creationTime == this.state.currentTime) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, NODE_R + 6, 0, 2 * Math.PI, false);
+            ctx.strokeStyle = 'white'
+            ctx.lineWidth = 0.6
+            ctx.stroke();
+        }
 
     }
 
@@ -120,21 +140,21 @@ export default class Graph extends React.Component {
     }
 
     // ========== TESTING FUNCTIONS ============
-    // updates node with id, updating record by increasing cycle count
+    // updates node with id, updating record by increasing time count
     // if node not found, nothing happens
     updateNode(id) {
         let nodes = this.state.data.nodes;
-        let nextCycle = this.state.currentCycle + 1;
+        let newTime = this.state.currentTime + 1;
         for (let node of nodes) {
             if (node.id === id) {
-                node.cycle = nextCycle;
+                node.lastUpdated = newTime;
             }
         }
         let data = this.state.data;
         data.nodes = nodes;
         this.setState({
             data: data,
-            currentCycle: nextCycle
+            currentTime: newTime
         })
     }
 
@@ -145,10 +165,27 @@ export default class Graph extends React.Component {
         this.updateNode(id);
     }
 
+    mockAdd() {
+        var nodeTypes = ["a", "b", "c", "d"];
+        var vals = [1, 4, 2, 6];
+        var idx = Math.floor(Math.random() * 4)
+        let newTime = this.state.currentTime + 1;
+
+        var node = { 
+            "id": "mockid" + newTime.toString(),
+            "name": nodeTypes[idx],
+            "val": vals[idx],
+        }
+        
+        this.addNodes([node]);
+    }
+
     // ========== END TESTING FUNCTIONS ============
     
     render() {
-        let highlightNodes = this.state.data.nodes.filter(n => n.cycle == this.state.currentCycle);
+        let highlightNodes = this.state.data.nodes.filter(n => 
+            n.creationTime == this.state.currentTime ||
+            n.lastUpdated == this.state.currentTime);
         return (
             <div>
             {this.state.data.nodes.length >= 1 ?
@@ -167,6 +204,8 @@ export default class Graph extends React.Component {
             <div className="placeholder">Waiting for updates...</div>}
 
             <div className="updateButton">
+            <span
+            className="button" onClick={this.mockAdd}>mock add</span>
             <span hidden={this.state.data.nodes.length == 0} 
             className="button" onClick={this.updateRandNode}>mock update</span>
             </div>

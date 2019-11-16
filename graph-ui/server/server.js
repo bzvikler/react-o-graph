@@ -2,12 +2,11 @@ const express = require('express');
 const app = express();
 
 // Graph structure stored in server
-var nodes = [];
+var nodesToAdd = [];
 var id = 1;
-var pendingUpdates = 1;
 
 // This endpoint is used by the client as an EventSource
-// Client retrieves tree structure through this endpoint
+// Client retrieves nodes to add/update/remove through this endpoint
 app.get('/graph', (req, res) => {
   
   res.set({'Connection': 'keep-alive',
@@ -15,16 +14,13 @@ app.get('/graph', (req, res) => {
           'Cache-Control': 'no-cache',
           'Access-Control-Allow-Origin': '*'});
 
-  if (pendingUpdates >= 1) {
-    var graph = {
-      "nodes": nodes,
-      "links": []
-    }
-    var data = JSON.stringify(graph);
-    const msg = 'id: 1\nevent: onUpdate\ndata: ' + data + '\n\n';
-    pendingUpdates--;
+  if (nodesToAdd.length > 0) {
+    var data = JSON.stringify(nodesToAdd);
+    nodesToAdd = [];
+    const msg = 'id: 1\nevent: onAdd\ndata: ' + data + '\n\n';
     res.send(msg);
   }
+  // todo: handle update and delete as well
   else {
     res.send('no updates');
   }
@@ -43,16 +39,14 @@ app.get('/addRandomNode', (req, res) => {
   var idx = Math.floor(Math.random() * 4)
 
   var node = { 
-    "id": id.toString(),
+    "id": "id" + id.toString(),
     "name": nodeTypes[idx],
     "val": vals[idx],
-    "cycle": 0,
   }
 
-  nodes.push(node);
+  nodesToAdd.push(node);
   id++;
-  pendingUpdates++;
-  res.send(nodes.length.toString());
+  res.send("created node with id " + node.id);
 })
 // ========================================================
 

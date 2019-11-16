@@ -46,6 +46,7 @@
 
   .button {
     padding: 8px;
+    margin: 5px;
     border-radius: 6px;
     text-decoration: none;
     background-color: #3f51b5;
