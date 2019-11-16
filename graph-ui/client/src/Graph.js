@@ -25,6 +25,7 @@ export default class Graph extends React.Component {
             name: "",
             id: "",
             val: "",
+            motionOn: true,
             currentTime: 0, // represents # graph updates received
         }
 
@@ -38,6 +39,11 @@ export default class Graph extends React.Component {
         this.handleClickaway = this.handleClickaway.bind(this);
         this.addNodes = this.addNodes.bind(this);
         this.paintRing = this.paintRing.bind(this);
+        this.paintUpdate = this.paintUpdate.bind(this);
+        this.paintAdd = this.paintAdd.bind(this);
+        this.paintSelect = this.paintSelect.bind(this);
+        this.getHighlightedNodes = this.getHighlightedNodes.bind(this);
+        this.toggleMotion = this.toggleMotion.bind(this);
 
         // testing functions
         this.updateNode = this.updateNode.bind(this);
@@ -56,12 +62,16 @@ export default class Graph extends React.Component {
     addNodes(nodes) {
         if (nodes.length > 0) {
             let newTime = this.state.currentTime + 1;
+
+            // for some reason `data` needs to be a new object,
+            // or else new nodes are unclickable
+            let data = JSON.parse(JSON.stringify(this.state.data));
+
             for (let n of nodes) {
                 n.creationTime = newTime;
                 n.lastUpdated = newTime;
+                data.nodes.push(n);
             }
-            let data = this.state.data;
-            data.nodes = data.nodes.concat(nodes);
             this.setState({
                 data: data,
                 currentTime: newTime
@@ -72,24 +82,49 @@ export default class Graph extends React.Component {
     }
 
     paintRing(node, ctx) {
-        // add ring just for highlighted nodes
-        let NODE_R = Math.sqrt(node.val) * 4;
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, NODE_R + 3, 0, 2 * Math.PI, false);
-        ctx.strokeStyle = 'white'
-        ctx.lineWidth = 0.6
-        ctx.stroke();
-
-        // if newly added, draw double line
         if (node.creationTime == this.state.currentTime) {
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, NODE_R + 6, 0, 2 * Math.PI, false);
-            ctx.strokeStyle = 'white'
-            ctx.lineWidth = 0.6
-            ctx.stroke();
+            this.paintAdd(node, ctx);
+        }
+        else if (node.lastUpdated == this.state.currentTime) {
+            this.paintUpdate(node, ctx);
         }
 
+        if (node.id == this.state.id) {
+            this.paintSelect(node, ctx);
+        }
+    }
+
+    // draw double outline
+    paintAdd(node, ctx) {
+        const NODE_R = Math.sqrt(node.val) * 4;
+        ctx.beginPath();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 0.6;
+        ctx.arc(node.x, node.y, NODE_R + 3, 0, 2 * Math.PI, false);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, NODE_R + 6, 0, 2 * Math.PI, false);
+        ctx.stroke();
+
+    }
+
+    // draw single red outline
+    paintUpdate(node, ctx) {
+        const NODE_R = Math.sqrt(node.val) * 4;
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff5959';
+        ctx.lineWidth = 1.5;
+        ctx.arc(node.x, node.y, NODE_R + 3, 0, 2 * Math.PI, false);
+        ctx.stroke();
+    }
+
+    paintSelect(node, ctx) {
+        const NODE_R = Math.sqrt(node.val) * 4;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, NODE_R + 6, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+        ctx.fill();
     }
 
     addAnimation() {
@@ -119,7 +154,7 @@ export default class Graph extends React.Component {
             node.vx = 0.25*((Math.random() * 2) - 1);
             node.vy = 0.25*((Math.random() * 2) - 1);
         }
-        this.setState({data: data});
+        this.setState({data: data, motionOn: true});
     }
 
     handleClick(node, event) {
@@ -137,6 +172,35 @@ export default class Graph extends React.Component {
             name: null,
             id: null,
             val: null})
+    }
+
+    getHighlightedNodes() {
+        return this.state.data.nodes.filter(n => 
+            n.creationTime == this.state.currentTime ||
+            n.lastUpdated == this.state.currentTime ||
+            n.id == this.state.id)
+    }
+
+    toggleMotion() {
+        let data = this.state.data;
+        if (this.state.motionOn) {
+            // Deactivate existing forces
+            const fg = this.fgRef.current;
+            fg.d3Force('center', null);
+            fg.d3Force('charge', null);
+            fg.d3Force('collide', null);
+            fg.d3Force('box', null);
+
+            for (let node of data.nodes) {
+                node.vx = 0;
+                node.vy = 0;
+            }
+            this.setState({data: data, motionOn: false});
+        }
+        else {
+            // start
+            this.addAnimation();
+        }
     }
 
     // ========== TESTING FUNCTIONS ============
@@ -183,9 +247,7 @@ export default class Graph extends React.Component {
     // ========== END TESTING FUNCTIONS ============
     
     render() {
-        let highlightNodes = this.state.data.nodes.filter(n => 
-            n.creationTime == this.state.currentTime ||
-            n.lastUpdated == this.state.currentTime);
+        let highlightNodes = this.getHighlightedNodes();
         return (
             <div>
             {this.state.data.nodes.length >= 1 ?
@@ -208,6 +270,8 @@ export default class Graph extends React.Component {
             className="button" onClick={this.mockAdd}>mock add</span>
             <span hidden={this.state.data.nodes.length == 0} 
             className="button" onClick={this.updateRandNode}>mock update</span>
+            <span hidden={this.state.data.nodes.length == 0} 
+            className="button" onClick={this.toggleMotion}>motion: {this.state.motionOn? "on" : "off"}</span>
             </div>
 
             {this.state.showDetails && 
