@@ -39,3 +39,30 @@
     background: white;
   }
   
+  .placeholder {
+    margin-top: 50px;
+    color: white;
+  }
+
+  .button {
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    background-color: #3f51b5;
+    color: #fff;
+  }
+  .button:hover {
+    cursor: pointer;
+  }
+  .button:active {
+    background-color: #1f2858;
+  }
+
+  .updateButton {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  

@@ -4,7 +4,13 @@
 // name is name of component
 // val is a numerical property (TBD); let's say it's # prop types for now, + 1
 // sample data: a dialog with a menu, input, dialog, and buttons
-
+export const emptyGraph = {
+    "nodes": [ 
+    ],
+    "links": [
+    ]
+  };
+  
 export const sampleGraph = {
     "nodes": [
         { 
