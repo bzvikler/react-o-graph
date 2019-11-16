@@ -19,21 +19,19 @@ app.get('/graph', (req, res) => {
     var data = JSON.stringify(nodesToAdd);
     nodesToAdd = [];
     const msg = 'id: 1\nevent: onAdd\ndata: ' + data + '\n\n';
-    res.send(msg);
+    res.write(msg);
   }
 
   if (nodesToUpdate.length > 0) {
     var data = JSON.stringify(nodesToUpdate);
     nodesToUpdate = [];
     const msg = 'id: 2\nevent: onUpdate\ndata: ' + data + '\n\n';
-    res.send(msg);
+    res.write(msg);
   }
   
   // todo: handle remove
-
-  else {
-    res.send('no updates');
-  }
+  
+  res.end();
 });
 
 // TODO: add endpoints for analysis API here!
@@ -62,7 +60,7 @@ app.get('/addRandomNode', (req, res) => {
   setTimeout(() => {
     nodesToUpdate.push(node);
   }, 4000);
-  
+
 })
 // ========================================================
 
