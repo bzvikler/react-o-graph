@@ -8,10 +8,19 @@ const copy = promisify(cpx.copy);
 const exec = promisify(require('child_process').exec)
 
 async function copyFiles() {
-  return copy(
-    '/Users/benzvikler/Desktop/watcher-test/**',
-    `${__dirname}/copied-app`,
-  );
+  try {
+    await copy(
+      '/Users/benzvikler/Desktop/watcher-test/**',
+      `${__dirname}/copied-app`,
+    );
+
+    return copy(
+      `${__dirname}/copy-files/analysis-api.js`,
+      `${__dirname}/copied-app/src`,
+    )
+  } catch (err) {
+    console.log(`${chalk.red.bold('ERROR')} ${err.message}`);
+  }
 }
 
 async function installDependencies() {
@@ -19,8 +28,6 @@ async function installDependencies() {
     const { stdout, stderr } = await exec(
       `cd ${__dirname}/copied-app && npm install`
     );
-    // console.log('stdout:', stdout);
-    // console.log('stderr:', stderr);
   } catch (err) {
     console.error(err);
   };
@@ -31,8 +38,6 @@ async function startApp() {
     const { stdout, stderr } = await exec(
       `cd ${__dirname}/copied-app && yarn start`
     );
-    // console.log('stdout:', stdout);
-    // console.log('stderr:', stderr);
   } catch (err) {
     console.error(err);
   };
@@ -55,7 +60,7 @@ export const run = async () => {
     console.log(e);
   }
 
-  /* for node modules
+  // TODO: add something to not install deps once installed already
   console.log(`${chalk.yellow.bold('WORKING')} Installing dependencies...`);
 
   try {
@@ -63,17 +68,12 @@ export const run = async () => {
   } catch (e) {
     console.log(e);
   }
-  */
 
-  /* for starting app
-  console.log(`${chalk.yellow.bold('WORKING')} Starting app...`);
+  console.log(`${chalk.green.bold('READY')} Running app...`);
 
   try {
     await startApp();
   } catch (e) {
     console.log(e);
   }
-  */
-
-  console.log('%s Project ready', chalk.green.bold('DONE'));
 }

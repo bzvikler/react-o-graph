@@ -1,28 +1,25 @@
-// injects calls to API in each component file
-// TODO: make functions to test if lifecycle methods already exist
-// move strings to be inserted into nice places
-// inject the AnalysisAPI
-// inject the imports needed to access it
-// fix installing all the time node_modules
-// get it to say "DONE" after running yarn start
 import readdirp from 'readdirp';
 import fs from 'fs';
 import { promisify } from 'util';
 
 import {
   isComponent,
-  isRenderLine,
   isJsOrJsx,
 } from './filters';
+import {
+  injectImport,
+  injectComponentDidUpdate,
+  injectComponentDidMount,
+} from './injectors';
 
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
-export async function injectCode() {
+async function prepareFiles() {
   let metaFiles = await readdirp.promise(
     `${__dirname}/copied-app`,
     {
-      fileFilter: '!*.json',
+      fileFilter: ['!*.json', '!*.test.*'],
       directoryFilter: ['!.git', '!*modules']
     }
   );
@@ -35,23 +32,18 @@ export async function injectCode() {
           ...file,
         }))
     );
-
   let fileReads = await Promise.all(pendingFileReads);
-  fileReads = fileReads
+  return fileReads
     .filter(file => isComponent(file.content));
+}
 
-  const componentDidUpdateString = `componentDidUpdate() { AnalysisAPI.onUpdate(); }`;
+export async function injectCode() {
+  const files = await prepareFiles();
 
-  const fileWrites = fileReads.map(file => {
-    const fileArray = file.content.split('\n');
-    const renderIndex = fileArray.findIndex(line => isRenderLine(line));
-    const preNewLine = fileArray.slice(0, renderIndex - 1);
-    const postNewLine = fileArray.slice(renderIndex, fileArray.length - 1);
-    const newFile = [
-      ...preNewLine,
-      componentDidUpdateString,
-      ...postNewLine,
-    ].join('\n');
+  const fileWrites = files.map(file => {
+    let newFile = injectImport(file.content, __dirname);
+    newFile = injectComponentDidUpdate(newFile);
+    newFile = injectComponentDidMount(newFile);
 
     return writeFile(`${__dirname}/copied-app/${file.path}`, newFile);
   });
