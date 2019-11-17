@@ -1,6 +1,6 @@
 import React, { createRef } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
-import NodeDetails from './NodeDetails';
+import NodeAnalysis from './NodeAnalysis';
 import { sampleGraph, emptyGraph } from './sampleGraph';
 import { forceCollide } from 'd3-force';
 
@@ -20,9 +20,7 @@ export default class Graph extends React.Component {
             // state for currently selected node
             data: (SERVER_ON ? emptyGraph : sampleGraph),
             showDetails: false,
-            name: "",
             id: "",
-            val: "",
             motionOn: true,
             currentTime: 0, // represents # graph updates received
         }
@@ -182,20 +180,18 @@ export default class Graph extends React.Component {
         node.nodeColor = "green"
         this.setState({
             showDetails: true,
-            name: node.name,
-            id: node.id,
-            val: node.val})
+            id: node.id,})
     }
 
     handleClickaway(event) {
         this.setState({
             showDetails: false,
-            name: null,
-            id: null,
-            val: null})
+            id: null,})
     }
 
     getHighlightedNodes() {
+        let info = this.state.data.nodes.map(n => [n.id, n.creationTime, n.lastUpdated, this.state.currentTime]);
+        console.log(info)
         return this.state.data.nodes.filter(n => 
             n.creationTime === this.state.currentTime ||
             n.lastUpdated === this.state.currentTime ||
@@ -279,9 +275,10 @@ export default class Graph extends React.Component {
             className="button" onClick={this.toggleMotion}>motion: {this.state.motionOn? "on" : "off"}</span>
             </div>
 
-            {this.state.showDetails && 
-            <NodeDetails 
-            node={this.state.data.nodes.filter(n => n.id === this.state.id)[0]} />}
+            <NodeAnalysis 
+            showDetails={this.state.showDetails}
+            activeNodeId={this.state.id}
+            nodes={this.state.data.nodes} />
             </div>
         );
     }
