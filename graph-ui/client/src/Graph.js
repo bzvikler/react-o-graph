@@ -33,19 +33,24 @@ export default class Graph extends React.Component {
         
         this.fgRef = createRef();
         this.addAnimation = this.addAnimation.bind(this);
+
         this.handleClick = this.handleClick.bind(this);
         this.handleClickaway = this.handleClickaway.bind(this);
+        this.toggleForce = this.toggleForce.bind(this);
+
         this.addNodes = this.addNodes.bind(this);
+        this.updateNodes = this.updateNodes.bind(this);
+        this.removeNodes = this.removeNodes.bind(this);
+
         this.paintRing = this.paintRing.bind(this);
         this.paintUpdate = this.paintUpdate.bind(this);
         this.paintAdd = this.paintAdd.bind(this);
         this.paintSelect = this.paintSelect.bind(this);
-        this.toggleForce = this.toggleForce.bind(this);
-
+        
         // testing functions
-        this.updateNodes = this.updateNodes.bind(this);
         this.mockUpdate = this.mockUpdate.bind(this);
         this.mockAdd = this.mockAdd.bind(this);
+        this.mockRemove = this.mockRemove.bind(this);
     }
 
     componentDidMount() {
@@ -54,6 +59,8 @@ export default class Graph extends React.Component {
                 'onAdd', (e) => this.addNodes(JSON.parse(e.data)));
             this.eventSource.addEventListener(
                 'onUpdate', (e) => this.updateNodes(JSON.parse(e.data)));
+            this.eventSource.addEventListener(
+                'onRemove', (e) => this.removeNodes(JSON.parse(e.data)));
         }
         this.addAnimation();
     }
@@ -93,6 +100,19 @@ export default class Graph extends React.Component {
         data.nodes = nodes;
         this.setState({
             data: data,
+        })
+    }
+
+    removeNodes(removed) {
+        let nodes = this.state.data.nodes;
+        for (let r of removed) {
+            let idx = nodes.findIndex((n) => n.id === r.id);
+            nodes.splice(idx, 1);
+        }
+        let data = this.state.data;
+        data.nodes = nodes;
+        this.setState({
+            data: data
         })
     }
 
@@ -227,6 +247,11 @@ export default class Graph extends React.Component {
         this.addNodes([node]);
     }
 
+    mockRemove() {
+        var idx = Math.floor(Math.random() * this.state.data.nodes.length);
+        this.removeNodes([this.state.data.nodes[idx]]);
+    }
+
     // ========== END TESTING FUNCTIONS ============
     
     render() {
@@ -253,8 +278,13 @@ export default class Graph extends React.Component {
             <div className="updateButton">
             <span
             className="button" onClick={this.mockAdd}>mock add</span>
+
             <span hidden={this.state.data.nodes.length === 0} 
             className="button" onClick={this.mockUpdate}>mock update</span>
+
+            <span hidden={this.state.data.nodes.length === 0} 
+            className="button" onClick={this.mockRemove}>mock remove</span>
+
             <span hidden={this.state.data.nodes.length === 0} 
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>
