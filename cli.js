@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 require = require('esm')(module /*, options*/);
-const directoryService = require('./directory-service');
+const runner = require('./runner');
 
-directoryService.run();
+runner.run();
