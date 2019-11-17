@@ -4,7 +4,30 @@ const app = express();
 // Graph structure stored in server
 var nodesToAdd = [];
 var nodesToUpdate = [];
+var nodesToRemove = [];
 var id = 1;
+
+// =========== SERVER ENDPOINTS =============
+
+app.post('/addNode', (req, res) => {
+  // TODO: (Nick)
+  // req.body will contain node object to add
+  // add this object to nodesToAdd
+});
+
+app.post('/updateNode', (req, res) => {
+  // TODO: (Nick)
+  // req.body will contain node object to update
+  // add this object to nodesToUpdate
+});
+
+app.post('/removeNode', (req, res) => {
+  // TODO: (Nick)
+  // req.body will contain node object to delete
+  // add this object to nodesToDelete
+});
+
+// ========= ENDPOINT(S) FOR SERVER-SENT EVENTS =============
 
 // This endpoint is used by the client as an EventSource
 // Client retrieves nodes to add/update/remove through this endpoint
@@ -29,8 +52,13 @@ app.get('/graph', (req, res) => {
     res.write(msg);
   }
   
-  // todo: handle remove
-  
+  if (nodesToRemove.length > 0) {
+    var data = JSON.stringify(nodesToRemove);
+    nodesToRemove = [];
+    const msg = 'id: 2\nevent: onRemove\ndata: ' + data + '\n\n';
+    res.write(msg);
+  }
+
   res.end();
 });
 

@@ -6,12 +6,13 @@ import React from 'react';
 
 // CHAD - THIS IS FOR YOU
 
-export default class NodeDetails extends React.Component {
+export default class NodeViewer extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
     }
     
     render() {
+        // this is just a mock display for now
         return (
             <div className="info">
                 <b>Information</b><br/>

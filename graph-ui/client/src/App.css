@@ -58,6 +58,13 @@
   .button:active {
     background-color: #1f2858;
   }
+  .button.on {
+    background-color: rgb(31, 152, 31);
+  }
+
+  .button.off {
+    background-color: rgb(148, 17, 17);
+  }
 
   .updateButton {
     position: absolute;
@@ -65,5 +72,11 @@
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+
+  .instructions {
+    color: #dadce0;
+    margin: 10px;
+    font-size: 12px;
   }
   
