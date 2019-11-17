@@ -2,7 +2,7 @@ import React, { createRef } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
 import NodeAnalysis from './NodeAnalysis';
 import { sampleGraph, emptyGraph } from './sampleGraph';
-import { forceCollide } from 'd3-force';
+import { forceCollide, forceX, forceY, forceManyBody, forceCenter } from 'd3-force';
 
 // Graph of nodes, each representing a component
 // nodes are coloured based on component type
@@ -13,6 +13,9 @@ import { forceCollide } from 'd3-force';
 // change this if running with server
 const SERVER_ON = true;
 
+// for mock add
+var fakeId = 1;
+
 export default class Graph extends React.Component {
     constructor(props) {
         super(props)
@@ -21,8 +24,7 @@ export default class Graph extends React.Component {
             data: (SERVER_ON ? emptyGraph : sampleGraph),
             showDetails: false,
             id: "",
-            motionOn: true,
-            currentTime: 0, // represents # graph updates received
+            forceOn: true,
         }
 
         if (SERVER_ON) {
@@ -38,8 +40,7 @@ export default class Graph extends React.Component {
         this.paintUpdate = this.paintUpdate.bind(this);
         this.paintAdd = this.paintAdd.bind(this);
         this.paintSelect = this.paintSelect.bind(this);
-        this.getHighlightedNodes = this.getHighlightedNodes.bind(this);
-        this.toggleMotion = this.toggleMotion.bind(this);
+        this.toggleForce = this.toggleForce.bind(this);
 
         // testing functions
         this.updateNodes = this.updateNodes.bind(this);
@@ -59,20 +60,16 @@ export default class Graph extends React.Component {
 
     addNodes(nodes) {
         if (nodes.length > 0) {
-            let newTime = this.state.currentTime + 1;
-
-            // for some reason `data` needs to be a new object,
-            // or else new nodes are unclickable
-            let data = JSON.parse(JSON.stringify(this.state.data));
+            let time = new Date();
+            let data = {...this.state.data};
 
             for (let n of nodes) {
-                n.creationTime = newTime;
-                n.lastUpdated = newTime;
+                n.creationTime = time;
+                n.lastUpdated = time;
                 data.nodes.push(n);
             }
             this.setState({
                 data: data,
-                currentTime: newTime
             }, () => {
               this.addAnimation();
           });
@@ -82,34 +79,44 @@ export default class Graph extends React.Component {
     // replaces nodes with updated node
     updateNodes(updated) {
         let nodes = this.state.data.nodes;
-        let newTime = this.state.currentTime + 1;
+        let time = new Date();
 
         for (let u of updated) {
             let idx = nodes.findIndex(n => n.id === u.id);
             if (idx < 0) return;
             let node = nodes[idx];
             // TODO: change other data based on updated node
-            node.lastUpdated = newTime;
+            node.lastUpdated = time;
         }
 
         let data = this.state.data;
         data.nodes = nodes;
         this.setState({
             data: data,
-            currentTime: newTime
         })
     }
 
     paintRing(node, ctx) {
-        if (node.creationTime === this.state.currentTime) {
-            this.paintAdd(node, ctx);
-        }
-        else if (node.lastUpdated === this.state.currentTime) {
-            this.paintUpdate(node, ctx);
-        }
-
+        // paint translucent fill over currently selected node
         if (node.id === this.state.id) {
             this.paintSelect(node, ctx);
+        }
+
+        let currentTime = new Date();
+        
+        // highlight node if created/updated within last 2 seconds, or if selected
+        const diff = 2000;
+        // Calculate the difference in milliseconds
+        const cDiff = Math.abs(currentTime - node.creationTime);
+        const uDiff = Math.abs(currentTime - node.lastUpdated);
+        
+        if (cDiff < diff) {
+            this.paintAdd(node, ctx);
+            return;
+        }
+        else if (uDiff < diff) {
+            this.paintUpdate(node, ctx);
+            return;
         }
     }
 
@@ -150,30 +157,13 @@ export default class Graph extends React.Component {
         let data = this.state.data;
         if (data.nodes.length === 0) return;
         const fg = this.fgRef.current;
-        // Deactivate existing forces
-        fg.d3Force('center', null);
-        fg.d3Force('charge', null);
-        // Add collision and bounding box forces
-        fg.d3Force('collide', forceCollide(4));
-
-        fg.d3Force('box', () => {
-            const N = this.state.data.nodes.length; // box size
-            const SQUARE_HALF_SIDE = N * 4;
-            data.nodes.forEach(node => {
-            const x = node.x || 0, y = node.y || 0;
-            // bounce on box walls
-            if (Math.abs(x) > SQUARE_HALF_SIDE) { node.vx *= -1; }
-            if (Math.abs(y) > SQUARE_HALF_SIDE) { node.vy *= -1; }
-            });
-        });
-
-        // set velocity of data
-        for (let node of data.nodes) {
-            // Initial velocity in random direction
-            node.vx = 0.25*((Math.random() * 2) - 1);
-            node.vy = 0.25*((Math.random() * 2) - 1);
-        }
-        this.setState({data: data, motionOn: true});
+        fg.d3Force('charge', forceManyBody().strength(1));
+        fg.d3Force('center', forceCenter())
+        fg.d3Force('collide', forceCollide().radius(function(node) {
+            const NODE_R = Math.sqrt(node.val) * 4;
+            return (NODE_R + 6) * 1.2;
+          }))
+        this.setState({data: data, forceOn: true});
     }
 
     handleClick(node, event) {
@@ -189,18 +179,9 @@ export default class Graph extends React.Component {
             id: null,})
     }
 
-    getHighlightedNodes() {
-        let info = this.state.data.nodes.map(n => [n.id, n.creationTime, n.lastUpdated, this.state.currentTime]);
-        console.log(info)
-        return this.state.data.nodes.filter(n => 
-            n.creationTime === this.state.currentTime ||
-            n.lastUpdated === this.state.currentTime ||
-            n.id === this.state.id)
-    }
-
-    toggleMotion() {
+    toggleForce() {
         let data = this.state.data;
-        if (this.state.motionOn) {
+        if (this.state.forceOn) {
             // Deactivate existing forces
             const fg = this.fgRef.current;
             fg.d3Force('center', null);
@@ -212,7 +193,7 @@ export default class Graph extends React.Component {
                 node.vx = 0;
                 node.vy = 0;
             }
-            this.setState({data: data, motionOn: false});
+            this.setState({data: data, forceOn: false});
         }
         else {
             // start
@@ -234,7 +215,8 @@ export default class Graph extends React.Component {
         var nodeTypes = ["a", "b", "c", "d"];
         var vals = [1, 4, 2, 6];
         var idx = Math.floor(Math.random() * 4)
-        let newTime = this.state.currentTime + 1;
+        let newTime = fakeId;
+        fakeId++;
 
         var node = { 
             "id": "mockid" + newTime.toString(),
@@ -248,10 +230,11 @@ export default class Graph extends React.Component {
     // ========== END TESTING FUNCTIONS ============
     
     render() {
-        let highlightNodes = this.getHighlightedNodes();
         return (
             <div>
             {this.state.data.nodes.length >= 1 ?
+            <div>
+            <div className="instructions">scroll to zoom in/out</div>
             <ForceGraph2D
             ref={this.fgRef}
             graphData={this.state.data}
@@ -260,19 +243,20 @@ export default class Graph extends React.Component {
             onBackgroundClick={this.handleClickaway}
             cooldownTime={Infinity}
             d3AlphaDecay={0}
-            d3VelocityDecay={0}
-            nodeCanvasObjectMode={node => highlightNodes.indexOf(node) !== -1 ? 'before' : undefined}
+            nodeCanvasObjectMode={n => 'after'}
             nodeCanvasObject={this.paintRing}
-            /> :
+            />
+            </div> :
             <div className="placeholder">Waiting for updates...</div>}
 
+            {/* buttons for testing */}
             <div className="updateButton">
             <span
             className="button" onClick={this.mockAdd}>mock add</span>
             <span hidden={this.state.data.nodes.length === 0} 
             className="button" onClick={this.mockUpdate}>mock update</span>
             <span hidden={this.state.data.nodes.length === 0} 
-            className="button" onClick={this.toggleMotion}>motion: {this.state.motionOn? "on" : "off"}</span>
+            className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>
 
             <NodeAnalysis 
