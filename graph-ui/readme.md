@@ -24,65 +24,19 @@ npm start
 - have http://localhost:3000 open in a separate window, watch the graph change
 
 # Data format
-- input to force graph UI is a an object of nodes and links, eg: 
+- Node object is as follows: (this is passed in the HTTP POST request body)
 ```js
-const myData = {
-  "nodes": [ 
-      { 
-        "id": "id1",
-        "name": "Menu",
-        "desc": "root",
-        "val": 3,
-      },
-      { 
-        "id": "id2",
-        "name": "MenuItem",
-        "val": 1
-      },
-      { 
-        "id": "id3",
-        "name": "MenuItem",
-        "val": 1
-      },
-      { 
-        "id": "id4",
-        "name": "MenuItem",
-        "val": 1
-      },
-      { 
-        "id": "id5",
-        "name": "Button",
-        "val": 1
-      },
-      { 
-        "id": "id6",
-        "name": "Button",
-        "val": 1 
-      }
-  ],
-  "links": [
-      {
-          "source": "id1",
-          "target": "id2"
-      },
-      {
-        "source": "id1",
-        "target": "id3"
-      },
-      {
-        "source": "id1",
-        "target": "id4"
-      },
-      {
-        "source": "id4",
-        "target": "id5"
-      },
-      {
-        "source": "id4",
-        "target": "id6"
-      },
-  ]
+const myNode = { 
+  "id": "abcde12345",     // unique ID for component
+  "name": "MyComponent",  // component name
+  "props": {              // component props
+    myProp1: "hello",
+    myProp2: 5,
+  },
+  "state": {              // component state
+    myState1: "dog",
+    myState2: 400,
+  }
 }
 ```
-- note: our graph will have an empty `links` array, since there will be no edges
 

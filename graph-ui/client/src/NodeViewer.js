@@ -18,7 +18,8 @@ export default class NodeViewer extends React.Component {
                 <b>Information</b><br/>
                 Component: {this.props.node.name} <br/>
                 Id: {this.props.node.id} <br />
-                Value: {this.props.node.val} <br />
+                Props: {JSON.stringify(this.props.node.props)} <br />
+                State: {JSON.stringify(this.props.node.state)} <br />
             </div>
         );
     }
