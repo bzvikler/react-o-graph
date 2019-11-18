@@ -10,7 +10,7 @@ const exec = promisify(require('child_process').exec)
 
 async function copyFiles() {
   await copy(
-    `${process.cwd()}/**`,
+    `${process.cwd()}/{,!(node_modules)/**/}*.*`,
     `${__dirname}/copied-app`,
   );
 
@@ -20,7 +20,7 @@ async function copyFiles() {
   )
 }
 
-function shouldInstallDependencies() {
+function dependencyCheck() {
   if (!existsSync(`${__dirname}/copied-app/node_modules/`)) {
     return true;
   }
@@ -34,7 +34,7 @@ function shouldInstallDependencies() {
 
   const { dependencies: destDeps } = JSON.parse(destPackage);
 
-  Object.keys(sourceDeps).forEach((dep) => {
+  for (const dep of Object.keys(sourceDeps)) {
     if (!destDeps[dep]) {
       return true;
     }
@@ -42,52 +42,43 @@ function shouldInstallDependencies() {
     if (destDeps[dep] !== sourceDeps[dep]) {
       return true;
     }
-  });
+  }
 
   return false;
 }
 
 async function installDependencies() {
-  console.log(shouldInstallDependencies());
-  const { stdout, stderr } = await exec(
-    `cd ${__dirname}/copied-app && npm install`
-  );
+  return exec(`cd ${__dirname}/copied-app && npm install`);
 }
 
 export const runDirectoryService = () => {
   return new Promise(async (resolve, reject) => {
-    console.log(`${chalk.yellow.bold('WORKING')} Copying project files...`);
-
     try {
+      // determine this before copying over new files
+      const shouldInstallDependencies = dependencyCheck();
+
+      console.log(`${chalk.yellow.bold('WORKING')} Copying project files...`);
+
       await copyFiles();
+
       console.log(`${chalk.blue.bold('INFO')} Copying done...`);
-    } catch (e) {
-      return reject(e);
-    }
+      console.log(`${chalk.yellow.bold('WORKING')} Injecting code...`);
 
-    console.log(`${chalk.yellow.bold('WORKING')} Injecting code...`);
-
-    try {
       await injectCode();
+
       console.log(`${chalk.blue.bold('INFO')} Code injection done...`);
-    } catch (e) {
-      return reject(e);
-    }
 
-    // TODO: fix this it isn't working...
-    if (shouldInstallDependencies()) {
-      console.log(`${chalk.yellow.bold('WORKING')} Installing dependencies...`);
-
-      try {
+      if (shouldInstallDependencies) {
+        console.log(`${chalk.yellow.bold('WORKING')} Installing dependencies...`);
         await installDependencies();
         console.log(`${chalk.blue.bold('INFO')} Dependency installation done...`);
-      } catch (e) {
-        return reject(e);
+      } else {
+        console.log(`${chalk.blue.bold('INFO')} Skipping dependency installation...`);
       }
-    } else {
-      console.log(`${chalk.blue.bold('INFO')} Skipping dependency installation...`);
-    }
 
-    resolve();
+      resolve();
+    } catch (e) {
+      return reject(e);
+    }
   });
 }
