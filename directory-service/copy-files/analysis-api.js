@@ -4,8 +4,8 @@ const onUpdate = () => {
 };
 
 const onMount = () => {
-  // TODO: network calls
   console.log('ON MOUNT');
+  fetch('http://localhost:5000/addRandomNode');
 };
 
 export default {

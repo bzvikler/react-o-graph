@@ -2,7 +2,7 @@
   "name": "react-o-graph",
   "version": "1.0.0",
   "description": "Metrics for your react app displayed in a fun graph visualization",
-  "main": "index.js",
+  "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
