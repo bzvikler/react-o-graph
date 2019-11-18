@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const mockData = require('../client/src/mockData');
 
 // Graph structure stored in server
 var nodesToAdd = [];
@@ -69,23 +70,16 @@ app.get('/graph', (req, res) => {
 // it's bad and hacky so dont ask me about it - susan
 app.get('/addRandomNode', (req, res) => {
   res.set({'Access-Control-Allow-Origin': '*'});
-  // add node
-  var nodeTypes = ["a", "b", "c", "d"];
-  var vals = [1, 4, 2, 6];
-  var idx = Math.floor(Math.random() * 4)
-
-  var node = { 
-    "id": "id" + id.toString(),
-    "name": nodeTypes[idx],
-    "val": vals[idx],
-  }
-
-  nodesToAdd.push(node);
+ 
+  let nodeId = "s_id" + id.toString();
   id++;
+  node = mockData.createRandomNode(nodeId);
+  nodesToAdd.push(node);
   res.send("created node with id " + node.id);
 
   // fake update
   setTimeout(() => {
+    node.state.fakeState1 = 10;
     nodesToUpdate.push(node);
   }, 4000);
 

@@ -1,8 +1,8 @@
 import React, { createRef } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
 import NodeAnalysis from './NodeAnalysis';
-import { sampleGraph, emptyGraph } from './sampleGraph';
-import { forceCollide, forceX, forceY, forceManyBody, forceCenter } from 'd3-force';
+import { forceCollide, forceManyBody, forceCenter } from 'd3-force';
+import { createRandomNode } from './mockData';
 
 // Graph of nodes, each representing a component
 // nodes are coloured based on component type
@@ -13,6 +13,13 @@ import { forceCollide, forceX, forceY, forceManyBody, forceCenter } from 'd3-for
 // change this if running with server
 const SERVER_ON = true;
 
+const emptyGraph = {
+    "nodes": [ 
+    ],
+    "links": [
+    ]
+  };
+
 // for mock add
 var fakeId = 1;
 
@@ -21,7 +28,7 @@ export default class Graph extends React.Component {
         super(props)
         this.state = {
             // state for currently selected node
-            data: (SERVER_ON ? emptyGraph : sampleGraph),
+            data: emptyGraph,
             showDetails: false,
             id: "",
             forceOn: true,
@@ -71,8 +78,11 @@ export default class Graph extends React.Component {
             let data = {...this.state.data};
 
             for (let n of nodes) {
+                // add additional data: creation/update time, node value
                 n.creationTime = time;
                 n.lastUpdated = time;
+                // value of node is 1 + # props
+                n.val = Object.keys(n.props).length + 1;
                 data.nodes.push(n);
             }
             this.setState({
@@ -92,7 +102,10 @@ export default class Graph extends React.Component {
             let idx = nodes.findIndex(n => n.id === u.id);
             if (idx < 0) return;
             let node = nodes[idx];
-            // TODO: change other data based on updated node
+            // update props, state, val, and update time
+            node.val = Object.keys(u.props).length + 1;
+            node.props = u.props;
+            node.state = u.state;
             node.lastUpdated = time;
         }
 
@@ -228,23 +241,14 @@ export default class Graph extends React.Component {
         let nodes = this.state.data.nodes;
         let idx = Math.floor(Math.random() * nodes.length);
         let node = this.state.data.nodes[idx];
+        node.state.fakeState1 = "updated";
         this.updateNodes([node]);
     }
 
     mockAdd() {
-        var nodeTypes = ["a", "b", "c", "d"];
-        var vals = [1, 4, 2, 6];
-        var idx = Math.floor(Math.random() * 4)
-        let newTime = fakeId;
+        let id = "g_id" + fakeId.toString();
         fakeId++;
-
-        var node = { 
-            "id": "mockid" + newTime.toString(),
-            "name": nodeTypes[idx],
-            "val": vals[idx],
-        }
-        
-        this.addNodes([node]);
+        this.addNodes([createRandomNode(id)]);
     }
 
     mockRemove() {
