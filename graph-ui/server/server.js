@@ -63,8 +63,6 @@ app.get('/graph', (req, res) => {
   res.end();
 });
 
-// TODO: add endpoints for analysis API here!
-
 // ==================================================
 // this endpoint is for UI testing purposes only!!
 // it's bad and hacky so dont ask me about it - susan

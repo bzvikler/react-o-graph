@@ -144,7 +144,10 @@ export default class Graph extends React.Component {
         const uDiff = Math.abs(currentTime - node.lastUpdated);
         
         if (cDiff < diff) {
-            this.paintAdd(node, ctx);
+            if (node.lastUpdated > node.creationTime) {
+                this.paintUpdate(node, ctx);
+            }
+            else this.paintAdd(node, ctx);
             return;
         }
         else if (uDiff < diff) {
