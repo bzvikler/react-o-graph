@@ -5,11 +5,14 @@ import { promisify } from 'util';
 import {
   isComponent,
   isJsOrJsx,
+  isTsOrTsx,
 } from './filters';
 import {
   injectImport,
+  injectName,
   injectComponentDidUpdate,
   injectComponentDidMount,
+  injectComponentWillUnmount,
 } from './injectors';
 
 const readFile = promisify(fs.readFile);
@@ -24,7 +27,7 @@ async function prepareFiles() {
     }
   );
   let pendingFileReads = metaFiles
-    .filter(file => isJsOrJsx(file.basename))
+    .filter(file => isJsOrJsx(file.basename) || isTsOrTsx(file.basename))
     .map(file =>
       readFile(`${__dirname}/copied-app/${file.path}`, 'utf8')
         .then(content => ({
@@ -42,8 +45,10 @@ export async function injectCode() {
 
   const fileWrites = files.map(file => {
     let newFile = injectImport(file.content, __dirname);
-    newFile = injectComponentDidUpdate(newFile);
+    newFile = injectName(newFile);
     newFile = injectComponentDidMount(newFile);
+    newFile = injectComponentDidUpdate(newFile);
+    newFile = injectComponentWillUnmount(newFile);
 
     return writeFile(`${__dirname}/copied-app/${file.path}`, newFile);
   });

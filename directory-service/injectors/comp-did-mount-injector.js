@@ -3,9 +3,10 @@ import {
   isDidMountLine,
   isRenderLine,
 } from '../filters';
-
-const ON_MOUNT_STRING = 'AnalysisApi.onMount();';
-const COMPONENT_DID_MOUNT_STRING = `componentDidMount() { ${ON_MOUNT_STRING} }\n`;
+import {
+  ON_MOUNT_STRING,
+  COMPONENT_DID_MOUNT_STRING,
+} from './constants';
 
 function alterComponentDidMount(fileContent) {
   const fileArray = fileContent.split('\n');

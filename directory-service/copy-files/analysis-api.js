@@ -7,7 +7,7 @@
  */
 const onUpdate = (node) => {
   // TODO: network calls
-  console.log('ON UPDATE');
+  console.log('ON UPDATE', node);
 };
 
 /**
@@ -19,7 +19,7 @@ const onUpdate = (node) => {
  */
 const onMount = (node) => {
   // TODO: network calls
-  console.log('ON MOUNT');
+  console.log('ON MOUNT', node);
 };
 
 /**
@@ -31,7 +31,7 @@ const onMount = (node) => {
  */
 const onUnmount = (node) => {
   // TODO: network calls
-  console.log('ON UNMOUNT');
+  console.log('ON UNMOUNT', node);
 }
 
 export default {

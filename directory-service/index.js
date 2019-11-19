@@ -48,7 +48,7 @@ function dependencyCheck() {
 }
 
 async function installDependencies() {
-  return exec(`cd ${__dirname}/copied-app && npm install`);
+  return exec(`cd ${__dirname}/copied-app && npm install && npm install uuid`);
 }
 
 export const runDirectoryService = () => {
