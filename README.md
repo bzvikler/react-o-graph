@@ -2,6 +2,13 @@
 
 Metrics of your react app in a fun graph visualization
 
+## Using React-o-graph in your app
+
+1. in the root directory run `npm install`
+2. from the root directory run `npm link`, this allows other projects to import react-o-graph
+3. from the root directory of your react app, run `react-o-graph`
+   1. *note* the first run will take a while
+
 ## App Flow
 
 1. user installs react-o-graph npm module
