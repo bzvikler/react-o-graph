@@ -1,5 +1,7 @@
 import React from 'react';
 import { Doughnut } from "react-chartjs-2";
+import SliderChart from "./SliderChart"
+import 'rc-slider/assets/index.css';
 
 // View expanded info showing metadata and additional visualizations
 // for each individual component
@@ -28,36 +30,72 @@ const data = {
     }]
 };
 
+const sliderData = [
+    {
+        props: {
+            name: "Chad",
+            age: 24,
+        },
+        timestamp: "11/21/2019",
+    },
+    {
+        props: {
+            name: "Chade",
+            age: 24,
+        },
+        timestamp: "11/22/2019",
+    },
+    {
+        props: {
+            name: "Chadee",
+            age: 25
+        },
+        timestamp: "11/23/2019",
+    },
+    {
+        props: {
+            name: "Achadee",
+            age: 26
+        },
+        timestamp: "11/24/2019",
+    },
+    {
+        props: {
+            name: "Kachadee",
+            age: 27
+        },
+        timestamp: "11/25/2019"
+    }
+]
+
+const wrapperStyle = { width: 400, margin: 50 }
+
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
     }
 
+    changePropsHistory(e) {
+        console.log(e);
+    }
+
+
     render() {
         // this is just a mock display for now
         return (
-            <div className="info">
-                <Doughnut
-                    data={data}
+            <div style={wrapperStyle} className="info">
+                <p>Information</p>
+                <p>Component: {this.props.node.name}</p>
+
+                {/* props history */}
+                <SliderChart
+                    data={sliderData}
                 />
-                <Doughnut
-                    data={data}
-                />
-                <Doughnut
-                    data={data}
-                />
-                <Doughnut
-                    data={data}
-                />
-                <Doughnut
-                    data={data}
-                />
-                <Doughnut
-                    data={data}
-                />
-                <Doughnut
-                    data={data}
-                />
+                <div className="doughnut-chart">
+                    <Doughnut
+                        data={data}
+                    />
+                </div>
             </div>
         );
     }
@@ -69,3 +107,55 @@ export default class NodeViewer extends React.Component {
 // Id: {this.props.node.id} <br />
 // Props: {JSON.stringify(this.props.node.props)} <br />
 // State: {JSON.stringify(this.props.node.state)} <br />
+ 
+// MOCK DATA FOR DOUGHNUT
+// data = { "a": 1, "b": 2, "c": 3 }
+
+// MOCK DATA FOR LIST
+// data = ["a", "b", "c"];
+
+// MOCK DATA FOR SLIDER
+// data = [
+//     {
+//         props: {},
+//         timestamp: "",
+//     },
+//     {
+//         props: {},
+//         timestamp: "",
+//     },
+//     {
+//         props: {},
+//         timestamp: "",
+//     },
+//     {
+//         props: {},
+//         timestamp: "",
+//     },
+// ]
+
+// data = [
+//     {
+//         state: {},
+//         timestamp: "",
+//     },
+//     {
+//         state: {},
+//         timestamp: "",
+//     },
+//     {
+//         state: {},
+//         timestamp: "",
+//     },
+//     {
+//         state: {},
+//         timestamp: "",
+//     },
+// ]
+{/* <SliderChart
+    data={this.propHistory()}
+/>
+
+<DoughnutChart
+
+/> */}
