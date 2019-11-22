@@ -12,6 +12,8 @@ var id = 1;
 
 app.post('/addNode', (req, res) => {
   // TODO: (Nick)
+  nodesToAdd.add(req.body);
+  res.send('POST request to add the node')
   // req.body will contain node object to add
   // add this object to nodesToAdd
 });
@@ -20,12 +22,16 @@ app.post('/updateNode', (req, res) => {
   // TODO: (Nick)
   // req.body will contain node object to update
   // add this object to nodesToUpdate
+  nodesToUpdate.add(req.body);
+  res.send('POST request to update the node')
 });
 
 app.post('/removeNode', (req, res) => {
   // TODO: (Nick)
   // req.body will contain node object to delete
   // add this object to nodesToDelete
+  nodesToDelete.add(req.body);
+  res.send('POST request to remove the node')
 });
 
 // ========= ENDPOINT(S) FOR SERVER-SENT EVENTS =============

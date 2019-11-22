@@ -7,6 +7,19 @@
  */
 const onUpdate = (node) => {
   // TODO: network calls
+  var url = "http://localhost:5000/updateNode";
+  fetch(url, {
+  method: 'POST',
+  headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  body:  JSON.stringify({
+            node,
+          }),
+  });
+
+
   console.log('ON UPDATE', node);
 };
 
@@ -19,6 +32,17 @@ const onUpdate = (node) => {
  */
 const onMount = (node) => {
   // TODO: network calls
+    var url = "http://localhost:5000/addNode";
+    fetch(url, {
+     method: 'POST',
+     headers: {
+         Accept: 'application/json',
+         'Content-Type': 'application/json',
+       },
+     body:  JSON.stringify({
+               node,
+             }),
+     });
   console.log('ON MOUNT', node);
 };
 
@@ -31,6 +55,18 @@ const onMount = (node) => {
  */
 const onUnmount = (node) => {
   // TODO: network calls
+    var url = "http://localhost:5000/removeNode";
+    fetch(url, {
+     method: 'POST',
+     headers: {
+         Accept: 'application/json',
+         'Content-Type': 'application/json',
+       },
+     body:  JSON.stringify({
+               node,
+          }),
+     });
+
   console.log('ON UNMOUNT', node);
 }
 
