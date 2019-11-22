@@ -26,6 +26,7 @@ async function startServer() {
     });
 
     serverChild.stderr.on('data', (data) => {
+      const dataString = data.toString();
       if (dataString.indexOf('WARN') === -1) {
         reject({ message: data.toString() });
       }

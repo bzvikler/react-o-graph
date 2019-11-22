@@ -32,12 +32,13 @@ export default class Graph extends React.Component {
             showDetails: false,
             id: "",
             forceOn: true,
+            showMockButtons: false,
         }
 
         if (SERVER_ON) {
             this.eventSource = new EventSource('http://localhost:5000/graph');
         }
-        
+
         this.fgRef = createRef();
         this.addAnimation = this.addAnimation.bind(this);
 
@@ -61,6 +62,11 @@ export default class Graph extends React.Component {
     }
 
     componentDidMount() {
+        // TODO: use commented version when implementation is done!
+        // if (this.getUrlParam("testMode", "") === "true") {
+        if (this.getUrlParam("testMode", "") === "") {
+            this.setState({showMockButtons: true});
+        }
         if (SERVER_ON) {
             this.eventSource.addEventListener(
                 'onAdd', (e) => this.addNodes(JSON.parse(e.data)));
@@ -70,6 +76,22 @@ export default class Graph extends React.Component {
                 'onRemove', (e) => this.removeNodes(JSON.parse(e.data)));
         }
         this.addAnimation();
+    }
+
+    getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    getUrlParam(parameter, defaultvalue){
+        var urlparameter = defaultvalue;
+        if(window.location.href.indexOf(parameter) > -1){
+            urlparameter = this.getUrlVars()[parameter];
+            }
+        return urlparameter;
     }
 
     addNodes(nodes) {
@@ -193,8 +215,8 @@ export default class Graph extends React.Component {
         let data = this.state.data;
         if (data.nodes.length === 0) return;
         const fg = this.fgRef.current;
-        fg.d3Force('charge', forceManyBody().strength(1));
-        fg.d3Force('center', forceCenter())
+        fg.d3Force('charge', forceManyBody().strength(0));
+        fg.d3Force('center', forceCenter());
         fg.d3Force('collide', forceCollide().radius(function(node) {
             const NODE_R = Math.sqrt(node.val) * 4;
             return (NODE_R + 6) * 1.2;
@@ -281,7 +303,7 @@ export default class Graph extends React.Component {
             </div> :
             <div className="placeholder">Waiting for updates...</div>}
 
-            {/* buttons for testing */}
+            {this.state.showMockButtons &&
             <div className="updateButton">
             <span
             className="button" onClick={this.mockAdd}>mock add</span>
@@ -294,7 +316,7 @@ export default class Graph extends React.Component {
 
             <span hidden={this.state.data.nodes.length === 0} 
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
-            </div>
+            </div>}
 
             <NodeAnalysis 
             showDetails={this.state.showDetails}
