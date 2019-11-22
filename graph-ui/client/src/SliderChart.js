@@ -31,6 +31,8 @@ export default class SliderChart extends React.Component {
                 this.state.currentDisplay = this.props.data[4];
                 break;
         }
+
+        this.setState(this.state);
     }
 
     render() {
@@ -47,7 +49,11 @@ export default class SliderChart extends React.Component {
                 </div>
                 <div className="slider-results">
                     <ReactJson
-                        src={this.state.currentDisplay}                    
+                        src={{
+                            ...this.state.currentDisplay.props,
+                            timestamp: this.state.currentDisplay.timestamp
+                        }}
+                        name={false}            
                     />
                 </div>
             </div>
