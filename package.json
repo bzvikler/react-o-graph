@@ -28,7 +28,7 @@
   "homepage": "https://github.com/bzvikler/react-o-graph#readme",
   "dependencies": {
     "chalk": "^3.0.0",
-    "chart.js": "^2.9.3",
+    "cors": "^2.8.5",
     "cpx": "^1.5.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",

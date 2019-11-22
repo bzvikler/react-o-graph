@@ -26,6 +26,7 @@ async function startServer() {
     });
 
     serverChild.stderr.on('data', (data) => {
+      const dataString = data.toString();
       if (dataString.indexOf('WARN') === -1) {
         reject({ message: data.toString() });
       }
@@ -101,7 +102,9 @@ export async function run() {
     await runDirectoryService();
     await startCopiedApp();
   } catch (e) {
-    console.log(`${chalk.red.bold('ERROR')} ${e.message}`);
+    console.log(
+      `${chalk.red.bold('ERROR')} ${e.message} with trace: \n${e.stack}`
+    );
     exec(`killall node`);
     process.exit(1);
   }

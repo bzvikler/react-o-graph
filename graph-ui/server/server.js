@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const mockData = require('../client/src/mockData');
 
@@ -8,36 +9,36 @@ var nodesToUpdate = [];
 var nodesToRemove = [];
 var id = 1;
 
+app.use(cors());
+app.use(express.json());
+
 // =========== SERVER ENDPOINTS =============
 
 app.post('/addNode', (req, res) => {
-  // TODO: (Nick)
-  // req.body will contain node object to add
-  // add this object to nodesToAdd
+  nodesToAdd.push(req.body.node);
+  res.send('POST request to add the node')
 });
 
 app.post('/updateNode', (req, res) => {
-  // TODO: (Nick)
-  // req.body will contain node object to update
-  // add this object to nodesToUpdate
+  nodesToUpdate.push(req.body.node);
+  res.send('POST request to update the node')
 });
-
 app.post('/removeNode', (req, res) => {
-  // TODO: (Nick)
-  // req.body will contain node object to delete
-  // add this object to nodesToDelete
+  nodesToDelete.push(req.body.node);
+  res.send('POST request to remove the node')
 });
 
 // ========= ENDPOINT(S) FOR SERVER-SENT EVENTS =============
 
-// This endpoint is used by the client as an EventSource
-// Client retrieves nodes to add/update/remove through this endpoint
+// This endpoint is used by the client as an EventSource// Client retrieves nodes to add/update/remove through this endpoint
 app.get('/graph', (req, res) => {
-  
-  res.set({'Connection': 'keep-alive',
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Access-Control-Allow-Origin': '*'});
+
+  res.set({
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Access-Control-Allow-Origin': '*'
+  });
 
   if (nodesToAdd.length > 0) {
     var data = JSON.stringify(nodesToAdd);
@@ -52,7 +53,7 @@ app.get('/graph', (req, res) => {
     const msg = 'id: 2\nevent: onUpdate\ndata: ' + data + '\n\n';
     res.write(msg);
   }
-  
+
   if (nodesToRemove.length > 0) {
     var data = JSON.stringify(nodesToRemove);
     nodesToRemove = [];
@@ -67,11 +68,11 @@ app.get('/graph', (req, res) => {
 // this endpoint is for UI testing purposes only!!
 // it's bad and hacky so dont ask me about it - susan
 app.get('/addRandomNode', (req, res) => {
-  res.set({'Access-Control-Allow-Origin': '*'});
- 
+  res.set({ 'Access-Control-Allow-Origin': '*' });
+
   let nodeId = "s_id" + id.toString();
   id++;
-  node = mockData.createRandomNode(nodeId);
+  let node = mockData.createRandomNode(nodeId);
   nodesToAdd.push(node);
   res.send("created node with id " + node.id);
 
