@@ -1,6 +1,6 @@
 import React from 'react';
-import { Doughnut } from "react-chartjs-2";
 import SliderChart from "./SliderChart"
+import DoughnutChart from './DoughnutChart';
 import 'rc-slider/assets/index.css';
 
 // View expanded info showing metadata and additional visualizations
@@ -91,11 +91,9 @@ export default class NodeViewer extends React.Component {
                 <SliderChart
                     data={sliderData}
                 />
-                <div className="doughnut-chart">
-                    <Doughnut
-                        data={data}
-                    />
-                </div>
+                <DoughnutChart
+                    data={data}
+                />
             </div>
         );
     }
