@@ -53,7 +53,7 @@ export default class SliderChart extends React.Component {
                             ...this.state.currentDisplay.props,
                             timestamp: this.state.currentDisplay.timestamp
                         }}
-                        name={false}            
+                        name={false}
                     />
                 </div>
             </div>
