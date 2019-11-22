@@ -10,20 +10,21 @@ var nodesToRemove = [];
 var id = 1;
 
 app.use(cors());
+app.use(express.json());
 
 // =========== SERVER ENDPOINTS =============
 
 app.post('/addNode', (req, res) => {
-  nodesToAdd.push(req.body);
+  nodesToAdd.push(req.body.node);
   res.send('POST request to add the node')
 });
 
 app.post('/updateNode', (req, res) => {
-  nodesToUpdate.push(req.body);
+  nodesToUpdate.push(req.body.node);
   res.send('POST request to update the node')
 });
 app.post('/removeNode', (req, res) => {
-  nodesToDelete.push(req.body);
+  nodesToDelete.push(req.body.node);
   res.send('POST request to remove the node')
 });
 
@@ -71,7 +72,7 @@ app.get('/addRandomNode', (req, res) => {
 
   let nodeId = "s_id" + id.toString();
   id++;
-  node = mockData.createRandomNode(nodeId);
+  let node = mockData.createRandomNode(nodeId);
   nodesToAdd.push(node);
   res.send("created node with id " + node.id);
 

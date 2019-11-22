@@ -193,7 +193,7 @@ export default class Graph extends React.Component {
         let data = this.state.data;
         if (data.nodes.length === 0) return;
         const fg = this.fgRef.current;
-        fg.d3Force('charge', forceManyBody().strength(1));
+        fg.d3Force('charge', forceManyBody().strength(0));
         fg.d3Force('center', forceCenter())
         fg.d3Force('collide', forceCollide().radius(function(node) {
             const NODE_R = Math.sqrt(node.val) * 4;
