@@ -9,6 +9,7 @@ var nodesToUpdate = [];
 var nodesToRemove = [];
 var id = 1;
 var sid = 1;
+var eventHistory = [];
 
 app.use(cors());
 app.use(express.json());
@@ -41,7 +42,18 @@ app.get('/graph', (req, res) => {
     'Access-Control-Allow-Origin': '*'
   });
 
-  sendEvents(res);
+  req.on('close', () => {
+    if (!res.finished) {
+      res.end();
+    }
+  });
+
+  checkConnectionToRestore(req, res);
+
+  setInterval(() => {
+    if (res.finished) return;
+    sendEvents(res);
+  }, 1000);
 
 });
 
@@ -52,6 +64,7 @@ function sendEvents(res) {
     const msg = 'id: '+ id + '\nevent: onAdd\ndata: ' + data + '\n\n';
     id++;
     res.write(msg);
+    eventHistory.push(msg);
   }
 
   if (nodesToUpdate.length > 0) {
@@ -60,6 +73,7 @@ function sendEvents(res) {
     const msg = 'id: '+ id + '\nevent: onUpdate\ndata: ' + data + '\n\n';
     id++;
     res.write(msg);
+    eventHistory.push(msg);
   }
 
   if (nodesToRemove.length > 0) {
@@ -68,9 +82,22 @@ function sendEvents(res) {
     const msg = 'id: '+ id + '\nevent: onRemove\ndata: ' + data + '\n\n';
     id++;
     res.write(msg);
+    eventHistory.push(msg);
   }
-  
-  setTimeout(() => sendEvents(res), 1000);
+}
+
+function checkConnectionToRestore(req, res) {
+  if (req.headers['last-event-id']) {
+    const eventId = parseInt(req.headers['last-event-id']);
+
+    eventsToReSend = eventHistory.filter((e) => e.id > eventId);
+
+    eventsToReSend.forEach((e) => {
+      if (!res.finished) {
+        res.write(e);
+      }
+    });
+  }
 }
 
 // ==================================================
