@@ -24,7 +24,7 @@ app.post('/updateNode', (req, res) => {
   res.send('POST request to update the node')
 });
 app.post('/removeNode', (req, res) => {
-  nodesToDelete.push(req.body.node);
+  nodesToRemove.push(req.body.node);
   res.send('POST request to remove the node')
 });
 
