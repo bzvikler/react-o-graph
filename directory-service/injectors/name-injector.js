@@ -9,7 +9,8 @@ import { isComponentDecLine } from '../filters';
 export const injectName = (fileContent) => {
   const fileArray = fileContent.split('\n');
   const componentDecIndex = fileArray.findIndex(isComponentDecLine);
-  const componentName = fileArray[componentDecIndex].split(' ')[1]; // class X ...
+  const decArray = fileArray[componentDecIndex].split(' ');
+  const componentName = decArray[decArray.findIndex((word) => word === 'class') + 1];
 
   const preNewLine = fileArray.slice(0, componentDecIndex);
   const postNewLine = fileArray.slice(componentDecIndex, fileArray.length);
