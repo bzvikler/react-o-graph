@@ -1,7 +1,7 @@
 import React, { createRef } from 'react';
 import { ForceGraph2D } from 'react-force-graph';
 import NodeAnalysis from './NodeAnalysis';
-import { forceCollide, forceManyBody, forceCenter } from 'd3-force';
+import { forceCollide, forceManyBody, forceCenter, forceX, forceY } from 'd3-force';
 import { createRandomNode } from './mockData';
 
 // Graph of nodes, each representing a component
@@ -111,7 +111,7 @@ export default class Graph extends React.Component {
                 data: data,
             }, () => {
               this.addAnimation();
-          });
+            });
         }
     }
 
@@ -131,11 +131,13 @@ export default class Graph extends React.Component {
             node.lastUpdated = time;
         }
 
-        let data = this.state.data;
+        let data = {...this.state.data};
         data.nodes = nodes;
         this.setState({
             data: data,
-        })
+        }, () => {
+          this.addAnimation();
+        });
     }
 
     removeNodes(removed) {
@@ -144,11 +146,13 @@ export default class Graph extends React.Component {
             let idx = nodes.findIndex((n) => n.id === r.id);
             nodes.splice(idx, 1);
         }
-        let data = this.state.data;
+        let data = {...this.state.data};
         data.nodes = nodes;
         this.setState({
-            data: data
-        })
+            data: data,
+        }, () => {
+          this.addAnimation();
+        });
     }
 
     paintRing(node, ctx) {
@@ -213,15 +217,18 @@ export default class Graph extends React.Component {
 
     addAnimation() {
         let data = this.state.data;
-        if (data.nodes.length === 0) return;
+        const num = data.nodes.length;
+        if (num === 0) return;
         const fg = this.fgRef.current;
         fg.d3Force('charge', forceManyBody().strength(0));
         fg.d3Force('center', forceCenter());
+        fg.d3Force('x', forceX().strength(0.3/num));
+        fg.d3Force('y', forceY().strength(0.3/num));
         fg.d3Force('collide', forceCollide().radius(function(node) {
             const NODE_R = Math.sqrt(node.val) * 4;
             return (NODE_R + 6) * 1.2;
           }))
-        this.setState({data: data, forceOn: true});
+        this.setState({forceOn: true});
     }
 
     handleClick(node, event) {
@@ -246,6 +253,8 @@ export default class Graph extends React.Component {
             fg.d3Force('charge', null);
             fg.d3Force('collide', null);
             fg.d3Force('box', null);
+            fg.d3Force('x', null);
+            fg.d3Force('y', null);
 
             for (let node of data.nodes) {
                 node.vx = 0;
