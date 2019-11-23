@@ -8,6 +8,7 @@ var nodesToAdd = [];
 var nodesToUpdate = [];
 var nodesToRemove = [];
 var id = 1;
+var sid = 1;
 
 app.use(cors());
 app.use(express.json());
@@ -24,7 +25,7 @@ app.post('/updateNode', (req, res) => {
   res.send('POST request to update the node')
 });
 app.post('/removeNode', (req, res) => {
-  nodesToDelete.push(req.body.node);
+  nodesToRemove.push(req.body.node);
   res.send('POST request to remove the node')
 });
 
@@ -40,29 +41,37 @@ app.get('/graph', (req, res) => {
     'Access-Control-Allow-Origin': '*'
   });
 
+  sendEvents(res);
+
+});
+
+function sendEvents(res) {
   if (nodesToAdd.length > 0) {
     var data = JSON.stringify(nodesToAdd);
     nodesToAdd = [];
-    const msg = 'id: 1\nevent: onAdd\ndata: ' + data + '\n\n';
+    const msg = 'id: '+ id + '\nevent: onAdd\ndata: ' + data + '\n\n';
+    id++;
     res.write(msg);
   }
 
   if (nodesToUpdate.length > 0) {
     var data = JSON.stringify(nodesToUpdate);
     nodesToUpdate = [];
-    const msg = 'id: 2\nevent: onUpdate\ndata: ' + data + '\n\n';
+    const msg = 'id: '+ id + '\nevent: onUpdate\ndata: ' + data + '\n\n';
+    id++;
     res.write(msg);
   }
 
   if (nodesToRemove.length > 0) {
     var data = JSON.stringify(nodesToRemove);
     nodesToRemove = [];
-    const msg = 'id: 2\nevent: onRemove\ndata: ' + data + '\n\n';
+    const msg = 'id: '+ id + '\nevent: onRemove\ndata: ' + data + '\n\n';
+    id++;
     res.write(msg);
   }
-
-  res.end();
-});
+  
+  setTimeout(() => sendEvents(res), 1000);
+}
 
 // ==================================================
 // this endpoint is for UI testing purposes only!!
@@ -70,8 +79,8 @@ app.get('/graph', (req, res) => {
 app.get('/addRandomNode', (req, res) => {
   res.set({ 'Access-Control-Allow-Origin': '*' });
 
-  let nodeId = "s_id" + id.toString();
-  id++;
+  let nodeId = "s_id" + sid.toString();
+  sid++;
   let node = mockData.createRandomNode(nodeId);
   nodesToAdd.push(node);
   res.send("created node with id " + node.id);
