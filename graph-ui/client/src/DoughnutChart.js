@@ -9,7 +9,9 @@ export default class DoughnutChart extends React.Component {
     render() {
         return (
             <div>
+                <p className="doughnut-title">TESTDONUT</p>
                 <Doughnut
+                    className="doughnut-chart"
                     data={this.props.data}
                 />
             </div>

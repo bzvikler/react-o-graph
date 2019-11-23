@@ -1,6 +1,7 @@
 import React from 'react';
 import NodeViewer from './NodeViewer';
 
+
 // Holds internal map of node id --> node details
 // passes analysis details to NodeViewer for currently selected nodes
 
@@ -33,10 +34,20 @@ export default class NodeAnalysis extends React.Component {
             // hashmap of nodeId->details ; this is populated from this.props.nodes
             analyzedNodes: new Map(),
         }
+
+        for (let n of this.props.nodes) {
+            if (!this.state.analyzedNodes.has(n.id)) {
+                this.createAnalyzedNode(n);
+            } else {
+                this.updateAnalyzedNode(n);
+            }
+        }
+        this.updateRenderStats();
     }
 
     componentWillUpdate() {
         console.log("Node Analysis Updating");
+        debugger;
         for (let n of this.props.nodes) {
             if (!this.state.analyzedNodes.has(n.id)) {
                 this.createAnalyzedNode(n);

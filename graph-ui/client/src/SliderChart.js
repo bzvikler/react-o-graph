@@ -4,10 +4,11 @@ import ReactJson from "react-json-view";
 
 export default class SliderChart extends React.Component {
     constructor(props) {
+        debugger;
         super(props);
         
         this.state = {
-            currentDisplay: this.props.data[4]
+            currentDisplay: this.props.data[this.props.data.length - 1]
         }
 
         this.changeHistory = this.changeHistory.bind(this);
@@ -16,19 +17,19 @@ export default class SliderChart extends React.Component {
     changeHistory(value) {
         switch(value) {
             case 0:
-                this.state.currentDisplay = this.props.data[0];
+                this.state.currentDisplay = this.props.data[4] || {};
                 break;
             case 25:
-                this.state.currentDisplay = this.props.data[1];
+                this.state.currentDisplay = this.props.data[3] || {};
                 break;
             case 50:
-                this.state.currentDisplay = this.props.data[2];
+                this.state.currentDisplay = this.props.data[2] || {};
                 break;
             case 75:
-                this.state.currentDisplay = this.props.data[3];
+                this.state.currentDisplay = this.props.data[1] || {};
                 break;
             case 100:
-                this.state.currentDisplay = this.props.data[4];
+                this.state.currentDisplay = this.props.data[0] || {};
                 break;
         }
 
@@ -38,6 +39,7 @@ export default class SliderChart extends React.Component {
     render() {
         return (
             <div>
+                <p className="slider-title">TEST</p>
                 <div className="slider-chart">
                     <Slider 
                         min={0}
@@ -49,10 +51,7 @@ export default class SliderChart extends React.Component {
                 </div>
                 <div className="slider-results">
                     <ReactJson
-                        src={{
-                            ...this.state.currentDisplay.props,
-                            timestamp: this.state.currentDisplay.timestamp
-                        }}
+                        src={this.state.currentDisplay}
                         name={false}
                     />
                 </div>

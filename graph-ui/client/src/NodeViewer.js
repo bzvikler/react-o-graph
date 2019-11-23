@@ -68,11 +68,13 @@ const sliderData = [
     }
 ]
 
+
 const wrapperStyle = { width: 400, margin: 50 }
 
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
+        debugger;
     }
 
     changePropsHistory(e) {
@@ -84,12 +86,42 @@ export default class NodeViewer extends React.Component {
         // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
-                <p>Information</p>
                 <p>Component: {this.props.node.name}</p>
 
                 {/* props history */}
                 <SliderChart
-                    data={sliderData}
+                    data={this.props.node.propHistory}
+                    {/* TODO: add name as a prop to SliderChart*/}
+                />
+                <SliderChart
+                    data={this.props.node.stateHistory}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
+                />
+                <DoughnutChart
+                    data={data}
                 />
                 <DoughnutChart
                     data={data}

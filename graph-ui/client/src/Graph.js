@@ -3,6 +3,8 @@ import { ForceGraph2D } from 'react-force-graph';
 import NodeAnalysis from './NodeAnalysis';
 import { forceCollide, forceManyBody, forceCenter } from 'd3-force';
 import { createRandomNode } from './mockData';
+import SlidingPane from "react-sliding-pane";
+import "react-sliding-pane/dist/react-sliding-pane.css";
 
 // Graph of nodes, each representing a component
 // nodes are coloured based on component type
@@ -33,6 +35,8 @@ export default class Graph extends React.Component {
             id: "",
             forceOn: true,
             showMockButtons: false,
+            isPaneOpen: false,
+            isPaneOpenLeft: false,
         }
 
         if (SERVER_ON) {
@@ -95,6 +99,7 @@ export default class Graph extends React.Component {
     }
 
     addNodes(nodes) {
+        debugger;
         if (nodes.length > 0) {
             let time = new Date();
             let data = {...this.state.data};
@@ -228,13 +233,16 @@ export default class Graph extends React.Component {
         node.nodeColor = "green"
         this.setState({
             showDetails: true,
-            id: node.id,})
+            id: node.id,
+            isPaneOpen: true});
     }
 
     handleClickaway(event) {
         this.setState({
             showDetails: false,
-            id: null,})
+            id: null,
+            isPaneOpen: false
+        });
     }
 
     toggleForce() {
@@ -318,10 +326,23 @@ export default class Graph extends React.Component {
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>}
 
-            <NodeAnalysis 
-            showDetails={this.state.showDetails}
-            activeNodeId={this.state.id}
-            nodes={this.state.data.nodes} />
+            
+            <SlidingPane
+                className="testPane"
+                overlayClassName="overlayTestPane"
+                isOpen={ this.state.isPaneOpen && this.state.showDetails }
+                title="Analysis"
+                onRequestClose={ () => {
+                    this.setState({ isPaneOpen: false });
+                }}
+                width="500px"
+            >
+                <NodeAnalysis 
+                    showDetails={this.state.showDetails}
+                    activeNodeId={this.state.id}
+                    nodes={this.state.data.nodes} 
+                />
+            </SlidingPane>
             </div>
         );
     }
