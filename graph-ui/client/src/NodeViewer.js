@@ -30,45 +30,6 @@ const data = {
     }]
 };
 
-const sliderData = [
-    {
-        props: {
-            name: "Chad",
-            age: 24,
-        },
-        timestamp: "11/21/2019",
-    },
-    {
-        props: {
-            name: "Chade",
-            age: 24,
-        },
-        timestamp: "11/22/2019",
-    },
-    {
-        props: {
-            name: "Chadee",
-            age: 25
-        },
-        timestamp: "11/23/2019",
-    },
-    {
-        props: {
-            name: "Achadee",
-            age: 26
-        },
-        timestamp: "11/24/2019",
-    },
-    {
-        props: {
-            name: "Kachadee",
-            age: 27
-        },
-        timestamp: "11/25/2019"
-    }
-]
-
-
 const wrapperStyle = { width: 400, margin: 50 }
 
 export default class NodeViewer extends React.Component {
@@ -87,45 +48,22 @@ export default class NodeViewer extends React.Component {
         return (
             <div style={wrapperStyle} className="info">
                 <p>Component: {this.props.node.name}</p>
+                {/* <p>Created At: {this.props.node.creationTime}</p> */}
+                <p>Number of children: {this.props.node.children}</p>
 
-                {/* props history */}
+                {/* prop history */}
                 <SliderChart
                     data={this.props.node.propHistory}
-                    {/* TODO: add name as a prop to SliderChart*/}
+                    name="Component Prop History"
                 />
+                <p>Prop renders: {this.props.node.propRenders}</p>
+
+                {/* state history */}
                 <SliderChart
                     data={this.props.node.stateHistory}
+                    name="Component State History"
                 />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
-                <DoughnutChart
-                    data={data}
-                />
+                <p>State renders: {this.props.node.stateRenders}</p>
             </div>
         );
     }

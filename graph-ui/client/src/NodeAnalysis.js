@@ -47,7 +47,6 @@ export default class NodeAnalysis extends React.Component {
 
     componentWillUpdate() {
         console.log("Node Analysis Updating");
-        debugger;
         for (let n of this.props.nodes) {
             if (!this.state.analyzedNodes.has(n.id)) {
                 this.createAnalyzedNode(n);
@@ -118,7 +117,8 @@ export default class NodeAnalysis extends React.Component {
     render() {
         return (
             this.props.showDetails &&
-            <NodeViewer 
+            <NodeViewer
+            nodeList={this.props.nodes} // TODO: remove this later
             node={this.state.analyzedNodes.get(this.props.activeNodeId)}
             renderStats={this.state.renderStats}
             />

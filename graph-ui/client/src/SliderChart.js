@@ -14,6 +14,10 @@ export default class SliderChart extends React.Component {
         this.changeHistory = this.changeHistory.bind(this);
     }
 
+    componentWillUpdate() {
+        this.state.currentDisplay = this.props.data[this.props.data.length -1]
+    }
+
     changeHistory(value) {
         switch(value) {
             case 0:
@@ -39,7 +43,7 @@ export default class SliderChart extends React.Component {
     render() {
         return (
             <div>
-                <p className="slider-title">TEST</p>
+                <p className="slider-title">{this.props.name}</p>
                 <div className="slider-chart">
                     <Slider 
                         min={0}
