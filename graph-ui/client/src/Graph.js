@@ -3,6 +3,9 @@ import { ForceGraph2D } from 'react-force-graph';
 import NodeAnalysis from './NodeAnalysis';
 import { forceCollide, forceManyBody, forceCenter, forceX, forceY } from 'd3-force';
 import { createRandomNode } from './mockData';
+import SlidingPane from "react-sliding-pane";
+import "react-sliding-pane/dist/react-sliding-pane.css";
+import DoughnutChart from './DoughnutChart';
 
 // Graph of nodes, each representing a component
 // nodes are coloured based on component type
@@ -33,6 +36,8 @@ export default class Graph extends React.Component {
             id: "",
             forceOn: true,
             showMockButtons: false,
+            isPaneOpen: false,
+            isPaneOpenLeft: false,
         }
 
         if (SERVER_ON) {
@@ -54,6 +59,9 @@ export default class Graph extends React.Component {
         this.paintUpdate = this.paintUpdate.bind(this);
         this.paintAdd = this.paintAdd.bind(this);
         this.paintSelect = this.paintSelect.bind(this);
+        this.getNodeName = this.getNodeName.bind(this);
+        this.findNodeName = this.findNodeName.bind(this);
+        this.buildDoughnutDataObject = this.buildDoughnutDataObject.bind(this);
         
         // testing functions
         this.mockUpdate = this.mockUpdate.bind(this);
@@ -64,6 +72,7 @@ export default class Graph extends React.Component {
     componentDidMount() {
         // TODO: use commented version when implementation is done!
         // if (this.getUrlParam("testMode", "") === "true") {
+        
         if (this.getUrlParam("testMode", "") === "") {
             this.setState({showMockButtons: true});
         }
@@ -77,7 +86,7 @@ export default class Graph extends React.Component {
         }
         this.addAnimation();
     }
-
+    
     getUrlVars() {
         var vars = {};
         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -85,20 +94,20 @@ export default class Graph extends React.Component {
         });
         return vars;
     }
-
+    
     getUrlParam(parameter, defaultvalue){
         var urlparameter = defaultvalue;
         if(window.location.href.indexOf(parameter) > -1){
             urlparameter = this.getUrlVars()[parameter];
-            }
+        }
         return urlparameter;
     }
-
+    
     addNodes(nodes) {
         if (nodes.length > 0) {
             let time = new Date();
             let data = {...this.state.data};
-
+            
             for (let n of nodes) {
                 // add additional data: creation/update time, node value
                 n.creationTime = time;
@@ -110,16 +119,60 @@ export default class Graph extends React.Component {
             this.setState({
                 data: data,
             }, () => {
-              this.addAnimation();
+                this.addAnimation();
             });
         }
     }
+    
+    getNodeName(node) {
+        console.log(node.id === this.state.id);
+        return node.id === this.state.id
+        // this.state.data.nodes
+    }
 
-    // replaces nodes with updated node
+    findNodeName() {
+        let node = this.state.data.nodes.find(this.getNodeName)
+        return node && node.name;
+    }
+
+    buildDoughnutDataObject() {
+        let nodeNameMap = {};
+
+        let data = {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [],
+                hoverBackgroundColor: [],
+            }],
+        }
+
+        for (let node of this.state.data.nodes) {
+            if (node.name in nodeNameMap) {
+                nodeNameMap[node.name].count += 1;
+            } else {
+                nodeNameMap[node.name] = { count: 1, color: node.color };
+            }
+        }
+
+        let keys = Object.keys(nodeNameMap);
+        let values = Object.values(nodeNameMap);
+        debugger;
+
+        data.labels = keys;
+
+        for (let entry of values) {
+            data.datasets[0].data.push(entry.count);
+            data.datasets[0].backgroundColor.push(entry.color);
+            data.datasets[0].hoverBackgroundColor.push(entry.color);
+        }
+
+        return data;
+    }
+
     updateNodes(updated) {
         let nodes = this.state.data.nodes;
         let time = new Date();
-
         for (let u of updated) {
             let idx = nodes.findIndex(n => n.id === u.id);
             if (idx < 0) return;
@@ -235,13 +288,16 @@ export default class Graph extends React.Component {
         node.nodeColor = "green"
         this.setState({
             showDetails: true,
-            id: node.id,})
+            id: node.id,
+            isPaneOpen: true});
     }
 
     handleClickaway(event) {
         this.setState({
             showDetails: false,
-            id: null,})
+            id: null,
+            isPaneOpen: false
+        });
     }
 
     toggleForce() {
@@ -282,6 +338,7 @@ export default class Graph extends React.Component {
     mockAdd() {
         let id = "g_id" + fakeId.toString();
         fakeId++;
+        this.buildDoughnutDataObject();
         this.addNodes([createRandomNode(id)]);
     }
 
@@ -296,20 +353,24 @@ export default class Graph extends React.Component {
         return (
             <div>
             {this.state.data.nodes.length >= 1 ?
-            <div>
-            <div className="instructions">scroll to zoom in/out</div>
-            <ForceGraph2D
-            ref={this.fgRef}
-            graphData={this.state.data}
-            nodeAutoColorBy={d => d.name}
-            onNodeClick={this.handleClick}
-            onBackgroundClick={this.handleClickaway}
-            cooldownTime={Infinity}
-            d3AlphaDecay={0}
-            nodeCanvasObjectMode={n => 'after'}
-            nodeCanvasObject={this.paintRing}
-            />
-            </div> :
+                <div>
+                    <div className="instructions">scroll to zoom in/out</div>
+                    <DoughnutChart
+                        data={this.buildDoughnutDataObject}
+                        title="Component Proportions"
+                    />
+                    <ForceGraph2D
+                        ref={this.fgRef}
+                        graphData={this.state.data}
+                        nodeAutoColorBy={d => d.name}
+                        onNodeClick={this.handleClick}
+                        onBackgroundClick={this.handleClickaway}
+                        cooldownTime={Infinity}
+                        d3AlphaDecay={0}
+                        nodeCanvasObjectMode={n => 'after'}
+                        nodeCanvasObject={this.paintRing}
+                    />
+                </div> :
             <div className="placeholder">Waiting for updates...</div>}
 
             {this.state.showMockButtons &&
@@ -326,11 +387,23 @@ export default class Graph extends React.Component {
             <span hidden={this.state.data.nodes.length === 0} 
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>}
-
-            <NodeAnalysis 
-            showDetails={this.state.showDetails}
-            activeNodeId={this.state.id}
-            nodes={this.state.data.nodes} />
+            
+            <SlidingPane
+                className="testPane"
+                overlayClassName="overlayTestPane"
+                isOpen={ this.state.isPaneOpen && this.state.showDetails }
+                title={this.findNodeName()}
+                onRequestClose={ () => {
+                    this.setState({ isPaneOpen: false });
+                }}
+                width="500px"
+            >
+                <NodeAnalysis 
+                    showDetails={this.state.showDetails}
+                    activeNodeId={this.state.id}
+                    nodes={this.state.data.nodes} 
+                />
+            </SlidingPane>
             </div>
         );
     }

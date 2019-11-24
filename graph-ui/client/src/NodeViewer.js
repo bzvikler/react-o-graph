@@ -9,70 +9,12 @@ import 'rc-slider/assets/index.css';
 
 // CHAD - THIS IS FOR YOU
 
-const data = {
-    labels: [
-        "red",
-        "green",
-        "yellow"
-    ],
-    datasets: [{
-        data: [300, 50, 100],
-        backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56'
-        ],
-        hoverBackgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56'
-        ]
-    }]
-};
-
-const sliderData = [
-    {
-        props: {
-            name: "Chad",
-            age: 24,
-        },
-        timestamp: "11/21/2019",
-    },
-    {
-        props: {
-            name: "Chade",
-            age: 24,
-        },
-        timestamp: "11/22/2019",
-    },
-    {
-        props: {
-            name: "Chadee",
-            age: 25
-        },
-        timestamp: "11/23/2019",
-    },
-    {
-        props: {
-            name: "Achadee",
-            age: 26
-        },
-        timestamp: "11/24/2019",
-    },
-    {
-        props: {
-            name: "Kachadee",
-            age: 27
-        },
-        timestamp: "11/25/2019"
-    }
-]
-
 const wrapperStyle = { width: 400, margin: 50 }
 
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
+        debugger;
     }
 
     changePropsHistory(e) {
@@ -84,16 +26,22 @@ export default class NodeViewer extends React.Component {
         // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
-                <p>Information</p>
-                <p>Component: {this.props.node.name}</p>
+                {/* <p>Created At: {this.props.node.creationTime}</p> */}
+                <p>Number of children: {this.props.node.children}</p>
 
-                {/* props history */}
+                {/* prop history */}
                 <SliderChart
-                    data={sliderData}
+                    data={this.props.node.propHistory}
+                    name="Component Prop History"
                 />
-                <DoughnutChart
-                    data={data}
+                <p>Prop renders: {this.props.node.propRenders}</p>
+
+                {/* state history */}
+                <SliderChart
+                    data={this.props.node.stateHistory}
+                    name="Component State History"
                 />
+                <p>State renders: {this.props.node.stateRenders}</p>
             </div>
         );
     }

@@ -26,17 +26,29 @@
     width: 100%
   }
   
+  .doughnut {
+    position: absolute;
+    z-index: 1;
+    float: left;
+    height: 30%;
+    width: 30%;
+  }
+  
   .info {
-    border: 1px solid black;
     padding: 5px;
     bottom: 0;
     right: 0;
     position: absolute;
-    width: 200px;
-    height: 250px;
+    width: 500px;
+    height: 500px;
     z-index: 1;
     overflow: scroll;
     background: white;
+  }
+
+  .slider-chart {
+    width: 80%;
+    display: inline-block;
   }
   
   .placeholder {
@@ -75,6 +87,12 @@
   }
 
   .instructions {
+    color: #dadce0;
+    margin: 10px;
+    font-size: 12px;
+  }
+
+  .doughnut-title {
     color: #dadce0;
     margin: 10px;
     font-size: 12px;
