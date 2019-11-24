@@ -9,27 +9,6 @@ import 'rc-slider/assets/index.css';
 
 // CHAD - THIS IS FOR YOU
 
-const data = {
-    labels: [
-        "red",
-        "green",
-        "yellow"
-    ],
-    datasets: [{
-        data: [300, 50, 100],
-        backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56'
-        ],
-        hoverBackgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56'
-        ]
-    }]
-};
-
 const wrapperStyle = { width: 400, margin: 50 }
 
 export default class NodeViewer extends React.Component {
@@ -47,7 +26,6 @@ export default class NodeViewer extends React.Component {
         // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
-                <p>Component: {this.props.node.name}</p>
                 {/* <p>Created At: {this.props.node.creationTime}</p> */}
                 <p>Number of children: {this.props.node.children}</p>
 

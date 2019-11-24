@@ -59,6 +59,7 @@ export default class Graph extends React.Component {
         this.paintUpdate = this.paintUpdate.bind(this);
         this.paintAdd = this.paintAdd.bind(this);
         this.paintSelect = this.paintSelect.bind(this);
+        this.getNodeName = this.getNodeName.bind(this);
         this.findNodeName = this.findNodeName.bind(this);
         this.buildDoughnutDataObject = this.buildDoughnutDataObject.bind(this);
         
@@ -123,6 +124,16 @@ export default class Graph extends React.Component {
         }
     }
     
+    getNodeName(node) {
+        console.log(node.id === this.state.id);
+        return node.id === this.state.id
+        // this.state.data.nodes
+    }
+
+    findNodeName() {
+        let node = this.state.data.nodes.find(this.getNodeName)
+        return node && node.name;
+    }
 
     buildDoughnutDataObject() {
         let nodeNameMap = {};
@@ -304,12 +315,6 @@ export default class Graph extends React.Component {
         }
     }
 
-    findNodeName(node) {
-        let selectedNode = node.id === this.props.activeNodeId
-
-        return selectedNode.name;
-    }
-
     // ========== TESTING FUNCTIONS ============
 
     // updates a random node
@@ -339,20 +344,24 @@ export default class Graph extends React.Component {
         return (
             <div>
             {this.state.data.nodes.length >= 1 ?
-            <div>
-            <div className="instructions">scroll to zoom in/out</div>
-            <ForceGraph2D
-            ref={this.fgRef}
-            graphData={this.state.data}
-            nodeAutoColorBy={d => d.name}
-            onNodeClick={this.handleClick}
-            onBackgroundClick={this.handleClickaway}
-            cooldownTime={Infinity}
-            d3AlphaDecay={0}
-            nodeCanvasObjectMode={n => 'after'}
-            nodeCanvasObject={this.paintRing}
-            />
-            </div> :
+                <div>
+                    <div className="instructions">scroll to zoom in/out</div>
+                    <DoughnutChart
+                        data={this.buildDoughnutDataObject}
+                        title="Component Proportions"
+                    />
+                    <ForceGraph2D
+                        ref={this.fgRef}
+                        graphData={this.state.data}
+                        nodeAutoColorBy={d => d.name}
+                        onNodeClick={this.handleClick}
+                        onBackgroundClick={this.handleClickaway}
+                        cooldownTime={Infinity}
+                        d3AlphaDecay={0}
+                        nodeCanvasObjectMode={n => 'after'}
+                        nodeCanvasObject={this.paintRing}
+                    />
+                </div> :
             <div className="placeholder">Waiting for updates...</div>}
 
             {this.state.showMockButtons &&
@@ -369,17 +378,12 @@ export default class Graph extends React.Component {
             <span hidden={this.state.data.nodes.length === 0} 
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>}
-
-            <DoughnutChart
-                data={this.buildDoughnutDataObject}
-            />
-
             
             <SlidingPane
                 className="testPane"
                 overlayClassName="overlayTestPane"
                 isOpen={ this.state.isPaneOpen && this.state.showDetails }
-                title="Analysis"
+                title={this.findNodeName()}
                 onRequestClose={ () => {
                     this.setState({ isPaneOpen: false });
                 }}
@@ -395,26 +399,3 @@ export default class Graph extends React.Component {
         );
     }
 }
-
-
-    // const data = {
-    //     labels: [
-    //         "red",
-    //         "green",
-    //         "yellow"
-    //     ],
-    //     datasets: [{
-    //         data: [300, 50, 100],
-    //         backgroundColor: [
-    //             '#FF6384',
-    //             '#36A2EB',
-    //             '#FFCE56'
-    //         ],
-    //         hoverBackgroundColor: [
-    //             '#FF6384',
-    //             '#36A2EB',
-    //             '#FFCE56'
-    //         ]
-    //     }]
-    // };
-    // replaces nodes with updated node

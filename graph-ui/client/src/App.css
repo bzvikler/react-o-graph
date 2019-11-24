@@ -26,6 +26,14 @@
     width: 100%
   }
   
+  .doughnut {
+    position: absolute;
+    z-index: 1;
+    float: left;
+    height: 30%;
+    width: 30%;
+  }
+  
   .info {
     padding: 5px;
     bottom: 0;
@@ -79,6 +87,12 @@
   }
 
   .instructions {
+    color: #dadce0;
+    margin: 10px;
+    font-size: 12px;
+  }
+
+  .doughnut-title {
     color: #dadce0;
     margin: 10px;
     font-size: 12px;
