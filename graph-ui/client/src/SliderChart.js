@@ -2,59 +2,56 @@ import React from "react";
 import Slider from "rc-slider";
 import ReactJson from "react-json-view";
 
+const sliderMap = {
+    5: { 0: "Earlier", 1: "", 2: "", 3: "", 4: "Latest" },
+    4: { 0: "Earliest", 1: "", 2: "", 3: "Latest" },
+    3: { 0: "Earliest", 1: "", 2: "Latest" },
+    2: { 0: "Earliest", 1: "Latest" },
+    1: { 0: "Latest"},
+    0: { 0: "Latest"},
+}
+
 export default class SliderChart extends React.Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            currentDisplay: this.props.data[this.props.data.length - 1]
+            currentVal: props.data.length < 2? 1 : props.data.length - 1
         }
 
         this.changeHistory = this.changeHistory.bind(this);
     }
 
-    componentWillUpdate() {
-        this.state.currentDisplay = this.props.data[this.props.data.length -1]
+    changeHistory(value) {
+        this.setState({currentVal: value});
     }
 
-    changeHistory(value) {
-        switch(value) {
-            case 0:
-                this.state.currentDisplay = this.props.data[4] || {};
-                break;
-            case 25:
-                this.state.currentDisplay = this.props.data[3] || {};
-                break;
-            case 50:
-                this.state.currentDisplay = this.props.data[2] || {};
-                break;
-            case 75:
-                this.state.currentDisplay = this.props.data[1] || {};
-                break;
-            case 100:
-                this.state.currentDisplay = this.props.data[0] || {};
-                break;
+    componentDidUpdate(prevProps) {
+        // reset slider when new component selected
+        if (this.props.id != prevProps.id) {
+            this.setState({currentVal: this.props.data.length})
         }
-
-        this.setState(this.state);
     }
 
     render() {
+        let currentDisplay = this.props.data[this.state.currentVal];
+        if (!currentDisplay || currentDisplay == null)
+            currentDisplay = {};
         return (
             <div>
-                <p className="slider-title">{this.props.name}</p>
+                <p className="slider-title">{this.props.name} {this.props.data.length}</p>
                 <div className="slider-chart">
                     <Slider 
                         min={0}
-                        defaultValue={100} 
-                        marks={{ 0: "Earliest", 25: "", 50: "", 75: "", 100: "Latest" }} 
-                        step={null}
+                        max={this.props.data.length < 2 ? 0 : this.props.data.length - 1}
+                        value={this.state.currentVal}
+                        marks={sliderMap[this.props.data.length]} 
                         onChange={this.changeHistory}
                     />
                 </div>
                 <div className="slider-results">
                     <ReactJson
-                        src={this.state.currentDisplay}
+                        src={currentDisplay}
                         name={false}
                     />
                 </div>
