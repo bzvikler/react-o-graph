@@ -1,7 +1,7 @@
 import React from 'react';
-import SliderChart from "./SliderChart"
-import DoughnutChart from './DoughnutChart';
+import SliderChart from "./SliderChart";
 import 'rc-slider/assets/index.css';
+import DoughnutChart from "./DoughnutChart";
 
 // View expanded info showing metadata and additional visualizations
 // for each individual component
@@ -14,6 +14,29 @@ const wrapperStyle = { width: 400, margin: 50 }
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
+
+        this.getRenderProportionStatistics = this.getRenderProportionStatistics.bind(this);
+    }
+
+    getRenderProportionStatistics() {
+        debugger;
+        const totalRenders = Object.values(this.props.renderStats).reduce((a, b) => a + b, 0);
+        const individualRenders = this.props.renderStats[this.props.node.id];
+        
+        return {
+            datasets: [{
+                data: [individualRenders, totalRenders]
+            }],
+
+            labels: [
+                "This Node",
+                "Other Nodes"
+            ],
+            backgroundColor: [
+                "#FFFFFF",
+                "#FFFFFF"
+            ],
+        }
     }
 
     changePropsHistory(e) {
@@ -25,6 +48,12 @@ export default class NodeViewer extends React.Component {
         // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
+                <DoughnutChart
+                    className="render-proportion-doughnut"
+                    data={this.getRenderProportionStatistics}
+                    title="Percentage of renders"    
+                />
+
                 {/* <p>Created At: {this.props.node.creationTime}</p> */}
                 <p>Number of children: {this.props.node.children}</p>
 

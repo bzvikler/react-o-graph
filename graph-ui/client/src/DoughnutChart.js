@@ -8,7 +8,7 @@ export default class DoughnutChart extends React.Component {
     
     render() {
         return (
-            <div className="doughnut">
+            <div className={this.props.className}>
                 <p className="doughnut-title">{this.props.title}</p>
                 <Doughnut
                     className="doughnut-chart"

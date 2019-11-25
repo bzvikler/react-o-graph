@@ -136,6 +136,7 @@ export default class Graph extends React.Component {
     }
 
     buildDoughnutDataObject() {
+        console.log("building doughnut data")
         let nodeNameMap = {};
 
         let data = {
@@ -166,6 +167,7 @@ export default class Graph extends React.Component {
             data.datasets[0].hoverBackgroundColor.push(entry.color);
         }
 
+        console.log(data);
         return data;
     }
 
@@ -337,7 +339,6 @@ export default class Graph extends React.Component {
     mockAdd() {
         let id = "g_id" + fakeId.toString();
         fakeId++;
-        this.buildDoughnutDataObject();
         this.addNodes([createRandomNode(id)]);
     }
 
@@ -355,6 +356,7 @@ export default class Graph extends React.Component {
                 <div>
                     <div className="instructions">scroll to zoom in/out</div>
                     <DoughnutChart
+                        className="node-proportion-doughnut"
                         data={this.buildDoughnutDataObject}
                         title="Component Proportions"
                     />
