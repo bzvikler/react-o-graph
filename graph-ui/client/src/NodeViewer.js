@@ -7,10 +7,6 @@ import DoughnutChart from "./DoughnutChart";
 // for each individual component
 // relevant data can be accessed in the this.props.node object
 
-// CHAD - THIS IS FOR YOU
-
-const wrapperStyle = { width: 400, margin: 50 }
-
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
@@ -28,7 +24,7 @@ export default class NodeViewer extends React.Component {
                 data: [individualRenders, otherRenders],
                 backgroundColor: [
                     "#36a2ec",
-                    "#ff6284"
+                    "navy"
                 ],
             }],
             labels: [
@@ -45,30 +41,31 @@ export default class NodeViewer extends React.Component {
 
     render() {
         return (
-            <div style={wrapperStyle} className="info">
+            <div className="info">
                 <div className="info-header">
-                    <h1>{this.props.node.name} Details</h1>
+                    <h1>{this.props.node.name}</h1>
                 </div>
                 <div className="info-section-header">
-                    <h2>Component Summary</h2>
+                    <h2>Render Summary</h2>
                 </div>
                 <div className="summary">
                     <div className="render-doughnut">
                         <DoughnutChart
                             className="render-proportion-doughnut"
                             data={this.getRenderProportionStatistics}
-                            title="Percentage of renders"
+                            title="Proportion of renders"
                         />
                     </div>
 
                     <div className="metric">
-                        <p>Renders by props:</p>
-                        <h1>{this.props.node.propRenders}</h1>
-                    </div>
-
-                    <div className="metric">
-                        <p>Renders by state:</p>
-                        <h1>{this.props.node.stateRenders}</h1>
+                        <div className="props">
+                            <p>Renders by props:</p>
+                            <h1>{this.props.node.propRenders}</h1>
+                        </div>
+                        <div className="state">
+                            <p>Renders by state:</p>
+                            <h1>{this.props.node.stateRenders}</h1>
+                        </div>
                     </div>
                 </div>
 
@@ -76,14 +73,14 @@ export default class NodeViewer extends React.Component {
                     <h2>State & Prop History</h2>
                 </div>
 
-                <div className="prop-history">
+                <div className="prop-history props">
                     <SliderChart
                         data={this.props.node.propHistory}
                         name="Props"
                     />
                 </div>
 
-                <div className="state-history">
+                <div className="state-history state">
                     <SliderChart
                         data={this.props.node.stateHistory}
                         name="State"

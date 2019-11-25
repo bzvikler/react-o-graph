@@ -30,22 +30,29 @@
     display: flex;
     flex-direction: column;
     border: 1px solid black;
-    padding: 5px;
+    padding: 10px;
     bottom: 0;
     right: 0;
     position: fixed;
-    width: 80% !important;
-    height: 80%;
+    width: 300px;
+    height: 100%;
     z-index: 1;
     background: white;
     overflow-x: hidden;
     overflow-y: scroll;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  }
+
+  .info-header {
+    padding-top: 25px;
+    color: #344152;
+    font-weight: bold;
   }
 
   .info-header, .info-section-header {
     display: flex;
     align-items: center;
-    text-align: left;
+    justify-content: center;
   }
 
   .info-header h1 {
@@ -55,18 +62,22 @@
 
   .info-section-header h2 {
     margin: 12px 12px 6px 12px;
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .info-section-header {
+    border-top: 1px solid rgb(192, 188, 188);
   }
 
   .summary {
-    margin: 0 12px 12px 12px;
+    margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
   }
 
   .metric {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .metric h1 {
@@ -118,6 +129,10 @@
     margin: 0 12px 0 12px;
   }
 
+  .slider-chart {
+    margin: 0 15px;
+  }
+
   .slider-title {
     text-align: left;
   }
@@ -125,4 +140,24 @@
   .slider-results {
     text-align: left;
     padding-top: 25px;
+  }
+
+  .props {
+    background-color: #e9fef6;
+    border: 1px solid #b6f8e1;
+    margin: 5px;
+    border-radius: 4px;
+    padding-bottom: 5px;
+  }
+
+  .state {
+    background-color: #e9eafc;
+    border: 1px solid #ccd0fc;
+    margin: 5px;
+    border-radius: 4px;
+    padding-bottom: 5px;
+  }
+
+  .comment {
+    font-size: 12px;
   }
