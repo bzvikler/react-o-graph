@@ -46,30 +46,35 @@ export default class NodeViewer extends React.Component {
         // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
-                <DoughnutChart
-                    className="render-proportion-doughnut"
-                    data={this.getRenderProportionStatistics}
-                    title="Percentage of renders"
-                />
+                <div className="render-doughnut">
+                    <DoughnutChart
+                        className="render-proportion-doughnut"
+                        data={this.getRenderProportionStatistics}
+                        title="Percentage of renders"
+                    />
+                </div>
+                
+                <div className="prop-renders-amount">
+                    <p>Prop renders: {this.props.node.propRenders}</p>
+                </div>
 
-                {/* <p>Created At: {this.props.node.creationTime}</p> */}
-                {/* <p>Number of children: {this.props.node.children}</p> */}
+                <div className="state-renders-amount">
+                    <p>State renders: {this.props.node.stateRenders}</p>
+                </div>
 
-                {/* prop history */}
-                <SliderChart
-                    data={this.props.node.propHistory}
-                    name="Component Prop History"
-                    id={this.props.id}
-                />
-                <p>Prop renders: {this.props.node.propRenders}</p>
+                <div className="prop-history">
+                    <SliderChart
+                        data={this.props.node.propHistory}
+                        name="Component Prop History"
+                    />
+                </div>
 
-                {/* state history */}
-                <SliderChart
-                    data={this.props.node.stateHistory}
-                    name="Component State History"
-                    id={this.props.id}
-                />
-                <p>State renders: {this.props.node.stateRenders}</p>
+                <div className="state-history">
+                    <SliderChart
+                        data={this.props.node.stateHistory}
+                        name="Component State History"
+                    />
+                </div>
             </div>
         );
     }
