@@ -157,7 +157,6 @@ export default class Graph extends React.Component {
 
         let keys = Object.keys(nodeNameMap);
         let values = Object.values(nodeNameMap);
-        debugger;
 
         data.labels = keys;
 
@@ -388,23 +387,25 @@ export default class Graph extends React.Component {
             className={this.state.forceOn? "button on" : "button off"} onClick={this.toggleForce}>force: {this.state.forceOn? "on" : "off"}</span>
             </div>}
             
-            <SlidingPane
-                className="testPane"
-                overlayClassName="overlayTestPane"
-                isOpen={ this.state.isPaneOpen && this.state.showDetails }
-                title={this.findNodeName()}
-                onRequestClose={ () => {
-                    this.setState({ isPaneOpen: false });
-                }}
-                width="500px"
-            >
-                <NodeAnalysis 
-                    showDetails={this.state.showDetails}
-                    activeNodeId={this.state.id}
-                    nodes={this.state.data.nodes} 
-                />
-            </SlidingPane>
+            <NodeAnalysis 
+                showDetails={this.state.showDetails}
+                activeNodeId={this.state.id}
+                nodes={this.state.data.nodes} 
+            />
+
             </div>
         );
     }
 }
+
+{/* <SlidingPane
+    className="testPane"
+    overlayClassName="overlayTestPane"
+    isOpen={ this.state.isPaneOpen && this.state.showDetails }
+    title={this.findNodeName()}
+    onRequestClose={ () => {
+        this.setState({ isPaneOpen: false });
+    }}
+    width="500px"
+>
+</SlidingPane> */}

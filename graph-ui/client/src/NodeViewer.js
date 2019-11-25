@@ -14,7 +14,6 @@ const wrapperStyle = { width: 400, margin: 50 }
 export default class NodeViewer extends React.Component {
     constructor(props) {
         super(props);
-        debugger;
     }
 
     changePropsHistory(e) {

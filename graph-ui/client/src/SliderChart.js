@@ -4,7 +4,6 @@ import ReactJson from "react-json-view";
 
 export default class SliderChart extends React.Component {
     constructor(props) {
-        debugger;
         super(props);
         
         this.state = {

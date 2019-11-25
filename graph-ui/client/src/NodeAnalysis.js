@@ -47,6 +47,8 @@ export default class NodeAnalysis extends React.Component {
 
     componentWillUpdate() {
         console.log("Node Analysis Updating");
+        console.log(this.state);
+        console.log(this.props)
         for (let n of this.props.nodes) {
             if (!this.state.analyzedNodes.has(n.id)) {
                 this.createAnalyzedNode(n);
