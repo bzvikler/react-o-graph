@@ -22,19 +22,18 @@ export default class NodeViewer extends React.Component {
         debugger;
         const totalRenders = Object.values(this.props.renderStats).reduce((a, b) => a + b, 0);
         const individualRenders = this.props.renderStats[this.props.node.id];
-        
+
         return {
             datasets: [{
-                data: [individualRenders, totalRenders]
+                data: [individualRenders, totalRenders],
+                backgroundColor: [
+                    "blue",
+                    "red"
+                ],
             }],
-
             labels: [
                 "This Node",
                 "Other Nodes"
-            ],
-            backgroundColor: [
-                "#FFFFFF",
-                "#FFFFFF"
             ],
         }
     }
@@ -51,7 +50,7 @@ export default class NodeViewer extends React.Component {
                 <DoughnutChart
                     className="render-proportion-doughnut"
                     data={this.getRenderProportionStatistics}
-                    title="Percentage of renders"    
+                    title="Percentage of renders"
                 />
 
                 {/* <p>Created At: {this.props.node.creationTime}</p> */}
@@ -81,7 +80,7 @@ export default class NodeViewer extends React.Component {
 // Id: {this.props.node.id} <br />
 // Props: {JSON.stringify(this.props.node.props)} <br />
 // State: {JSON.stringify(this.props.node.state)} <br />
- 
+
 // MOCK DATA FOR DOUGHNUT
 // data = { "a": 1, "b": 2, "c": 3 }
 
