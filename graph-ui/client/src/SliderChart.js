@@ -54,7 +54,7 @@ export default class SliderChart extends React.Component {
                 </div>
                 <div className="slider-results">
                     <ReactJson
-                        src={this.state.currentDisplay}
+                        src={this.state.currentDisplay == null ? {} : this.state.currentDisplay}
                         name={false}
                     />
                 </div>
