@@ -123,6 +123,7 @@ export default class NodeAnalysis extends React.Component {
             nodeList={this.props.nodes} // TODO: remove this later
             node={this.state.analyzedNodes.get(this.props.activeNodeId)}
             renderStats={this.state.renderStats}
+            id={this.props.activeNodeId}
             />
         );
     }

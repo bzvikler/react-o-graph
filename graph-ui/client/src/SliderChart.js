@@ -7,39 +7,30 @@ export default class SliderChart extends React.Component {
         super(props);
         
         this.state = {
-            currentDisplay: this.props.data[this.props.data.length - 1]
+            currentVal: 100
         }
 
         this.changeHistory = this.changeHistory.bind(this);
     }
 
-    componentWillUpdate() {
-        this.state.currentDisplay = this.props.data[this.props.data.length -1]
+    changeHistory(value) {
+        this.setState({currentVal: value});
     }
 
-    changeHistory(value) {
-        switch(value) {
-            case 0:
-                this.state.currentDisplay = this.props.data[4] || {};
-                break;
-            case 25:
-                this.state.currentDisplay = this.props.data[3] || {};
-                break;
-            case 50:
-                this.state.currentDisplay = this.props.data[2] || {};
-                break;
-            case 75:
-                this.state.currentDisplay = this.props.data[1] || {};
-                break;
-            case 100:
-                this.state.currentDisplay = this.props.data[0] || {};
-                break;
+    componentDidUpdate(prevProps) {
+        // reset slider when new component selected
+        if (this.props.id != prevProps.id) {
+            this.setState({currentVal: 100})
         }
-
-        this.setState(this.state);
     }
 
     render() {
+        let idx = this.state.currentVal / 25;
+        let data = this.props.data;
+        while (data.length < 5) {
+            data.unshift({});
+        }
+        let currentDisplay = data[idx] == null ? {} : data[idx];
         return (
             <div>
                 <p className="slider-title">{this.props.name}</p>
@@ -47,6 +38,7 @@ export default class SliderChart extends React.Component {
                     <Slider 
                         min={0}
                         defaultValue={100} 
+                        value={this.state.currentVal}
                         marks={{ 0: "Earliest", 25: "", 50: "", 75: "", 100: "Latest" }} 
                         step={null}
                         onChange={this.changeHistory}
@@ -54,7 +46,7 @@ export default class SliderChart extends React.Component {
                 </div>
                 <div className="slider-results">
                     <ReactJson
-                        src={this.state.currentDisplay == null ? {} : this.state.currentDisplay}
+                        src={currentDisplay}
                         name={false}
                     />
                 </div>

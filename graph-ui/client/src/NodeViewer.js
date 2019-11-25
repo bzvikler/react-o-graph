@@ -59,6 +59,7 @@ export default class NodeViewer extends React.Component {
                 <SliderChart
                     data={this.props.node.propHistory}
                     name="Component Prop History"
+                    id={this.props.id}
                 />
                 <p>Prop renders: {this.props.node.propRenders}</p>
 
@@ -66,6 +67,7 @@ export default class NodeViewer extends React.Component {
                 <SliderChart
                     data={this.props.node.stateHistory}
                     name="Component State History"
+                    id={this.props.id}
                 />
                 <p>State renders: {this.props.node.stateRenders}</p>
             </div>
