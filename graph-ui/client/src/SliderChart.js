@@ -39,7 +39,7 @@ export default class SliderChart extends React.Component {
             currentDisplay = {};
         return (
             <div>
-                <p className="slider-title">{this.props.name} {this.props.data.length}</p>
+                <p className="slider-title">{this.props.name}</p>
                 <div className="slider-chart">
                     <Slider 
                         min={0}
