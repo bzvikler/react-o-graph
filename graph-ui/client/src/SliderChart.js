@@ -7,8 +7,8 @@ const sliderMap = {
     4: { 0: "Earliest", 1: "", 2: "", 3: "Latest" },
     3: { 0: "Earliest", 1: "", 2: "Latest" },
     2: { 0: "Earliest", 1: "Latest" },
-    1: { 0: "Latest"},
-    0: { 0: "Latest"},
+    1: { 0: "No updates to show"},
+    0: { 0: "No updates to show"},
 }
 
 export default class SliderChart extends React.Component {
@@ -16,7 +16,7 @@ export default class SliderChart extends React.Component {
         super(props);
         
         this.state = {
-            currentVal: props.data.length < 2? 1 : props.data.length - 1
+            currentVal: props.data.length < 2? 0 : props.data.length - 1
         }
 
         this.changeHistory = this.changeHistory.bind(this);
@@ -29,7 +29,7 @@ export default class SliderChart extends React.Component {
     componentDidUpdate(prevProps) {
         // reset slider when new component selected
         if (this.props.id != prevProps.id) {
-            this.setState({currentVal: this.props.data.length})
+            this.setState({currentVal: this.props.data.length < 2? 0 : this.props.data.length - 1})
         }
     }
 
