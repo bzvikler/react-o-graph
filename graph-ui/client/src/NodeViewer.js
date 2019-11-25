@@ -19,15 +19,16 @@ export default class NodeViewer extends React.Component {
     }
 
     getRenderProportionStatistics() {
-        const totalRenders = Object.values(this.props.renderStats).reduce((a, b) => a + b, 0);
-        const individualRenders = this.props.renderStats[this.props.node.id];
+        const totalRenders = Object.values(this.props.renderStats).reduce((a, b) => a + b + 1, 0);
+        const individualRenders = this.props.renderStats[this.props.node.id] + 1;
+        const otherRenders = totalRenders - individualRenders;
 
         return {
             datasets: [{
-                data: [individualRenders, totalRenders],
+                data: [individualRenders, otherRenders],
                 backgroundColor: [
-                    "blue",
-                    "red"
+                    "green",
+                    "grey"
                 ],
             }],
             labels: [
@@ -43,7 +44,6 @@ export default class NodeViewer extends React.Component {
 
 
     render() {
-        // this is just a mock display for now
         return (
             <div style={wrapperStyle} className="info">
                 <div className="render-doughnut">
