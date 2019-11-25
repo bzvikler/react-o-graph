@@ -27,8 +27,8 @@ export default class NodeViewer extends React.Component {
             datasets: [{
                 data: [individualRenders, otherRenders],
                 backgroundColor: [
-                    "green",
-                    "grey"
+                    "#36a2ec",
+                    "#ff6284"
                 ],
             }],
             labels: [
@@ -46,33 +46,47 @@ export default class NodeViewer extends React.Component {
     render() {
         return (
             <div style={wrapperStyle} className="info">
-                <div className="render-doughnut">
-                    <DoughnutChart
-                        className="render-proportion-doughnut"
-                        data={this.getRenderProportionStatistics}
-                        title="Percentage of renders"
-                    />
+                <div className="info-header">
+                    <h1>{this.props.node.name} Details</h1>
                 </div>
-                
-                <div className="prop-renders-amount">
-                    <p>Prop renders: {this.props.node.propRenders}</p>
+                <div className="info-section-header">
+                    <h2>Component Summary</h2>
+                </div>
+                <div className="summary">
+                    <div className="render-doughnut">
+                        <DoughnutChart
+                            className="render-proportion-doughnut"
+                            data={this.getRenderProportionStatistics}
+                            title="Percentage of renders"
+                        />
+                    </div>
+
+                    <div className="metric">
+                        <p>Renders by props:</p>
+                        <h1>{this.props.node.propRenders}</h1>
+                    </div>
+
+                    <div className="metric">
+                        <p>Renders by state:</p>
+                        <h1>{this.props.node.stateRenders}</h1>
+                    </div>
                 </div>
 
-                <div className="state-renders-amount">
-                    <p>State renders: {this.props.node.stateRenders}</p>
+                <div className="info-section-header">
+                    <h2>State & Prop History</h2>
                 </div>
 
                 <div className="prop-history">
                     <SliderChart
                         data={this.props.node.propHistory}
-                        name="Component Prop History"
+                        name="Props"
                     />
                 </div>
 
                 <div className="state-history">
                     <SliderChart
                         data={this.props.node.stateHistory}
-                        name="Component State History"
+                        name="State"
                     />
                 </div>
             </div>

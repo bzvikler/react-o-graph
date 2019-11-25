@@ -14,7 +14,7 @@ const sliderMap = {
 export default class SliderChart extends React.Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             currentVal: props.data.length < 2? 0 : props.data.length - 1
         }
@@ -38,14 +38,14 @@ export default class SliderChart extends React.Component {
         if (!currentDisplay || currentDisplay == null)
             currentDisplay = {};
         return (
-            <div>
+            <div className="slider-container">
                 <p className="slider-title">{this.props.name}</p>
                 <div className="slider-chart">
-                    <Slider 
+                    <Slider
                         min={0}
                         max={this.props.data.length < 2 ? 0 : this.props.data.length - 1}
                         value={this.state.currentVal}
-                        marks={sliderMap[this.props.data.length]} 
+                        marks={sliderMap[this.props.data.length]}
                         onChange={this.changeHistory}
                     />
                 </div>
