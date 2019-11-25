@@ -68,10 +68,7 @@ export default class Graph extends React.Component {
     }
 
     componentDidMount() {
-        // TODO: use commented version when implementation is done!
-        // if (this.getUrlParam("testMode", "") === "true") {
-        
-        if (this.getUrlParam("testMode", "") === "") {
+        if (this.getUrlParam("testMode", "") === "true") {
             this.setState({showMockButtons: true});
         }
         if (SERVER_ON) {
