@@ -19,7 +19,6 @@ export default class NodeViewer extends React.Component {
     }
 
     getRenderProportionStatistics() {
-        debugger;
         const totalRenders = Object.values(this.props.renderStats).reduce((a, b) => a + b, 0);
         const individualRenders = this.props.renderStats[this.props.node.id];
 
@@ -54,7 +53,7 @@ export default class NodeViewer extends React.Component {
                 />
 
                 {/* <p>Created At: {this.props.node.creationTime}</p> */}
-                <p>Number of children: {this.props.node.children}</p>
+                {/* <p>Number of children: {this.props.node.children}</p> */}
 
                 {/* prop history */}
                 <SliderChart

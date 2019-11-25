@@ -36,8 +36,6 @@ export default class Graph extends React.Component {
             id: "",
             forceOn: true,
             showMockButtons: false,
-            isPaneOpen: false,
-            isPaneOpenLeft: false,
         }
 
         if (SERVER_ON) {
@@ -289,15 +287,13 @@ export default class Graph extends React.Component {
         node.nodeColor = "green"
         this.setState({
             showDetails: true,
-            id: node.id,
-            isPaneOpen: true});
+            id: node.id});
     }
 
     handleClickaway(event) {
         this.setState({
             showDetails: false,
             id: null,
-            isPaneOpen: false
         });
     }
 
@@ -355,11 +351,11 @@ export default class Graph extends React.Component {
             {this.state.data.nodes.length >= 1 ?
                 <div>
                     <div className="instructions">scroll to zoom in/out</div>
-                    <DoughnutChart
+                    {/* <DoughnutChart
                         className="node-proportion-doughnut"
                         data={this.buildDoughnutDataObject}
                         title="Component Proportions"
-                    />
+                    /> */}
                     <ForceGraph2D
                         ref={this.fgRef}
                         graphData={this.state.data}
