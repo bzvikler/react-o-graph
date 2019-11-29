@@ -1,10 +1,12 @@
 # react-o-graph
 
-Metrics of your react app in a fun graph visualization
+Metrics of your react app in a fun graph visualization!
+
+Project video: https://youtu.be/D5ysKTC6l_4
 
 ## Project Information
 
-- uses **semantic analysis** on the source repo to inject calls to our react-o-graph API
+- uses **lexical and syntactic analysis** on the source repo to inject calls to our react-o-graph API and uses **semantic analysis** to pass component data into the calls
 - **dynamic analysis** is performed when the app runs, updating the graph visualization as components change
 - dynamic metadata of the components (such as props and state) can be viewed by clicking on a node in the graph, opening a sidebar with render details and history
 
